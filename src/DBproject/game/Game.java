@@ -30,8 +30,7 @@ public class Game {
         player2Score = 0;
     }
 
-    public Game(String player1, String player2, int player1Score, int player2Score,
-                String currentPlayer, Board board) {
+    public Game(String player1, String player2, int player1Score, int player2Score, String currentPlayer, Board board) {
         this.board = board;
         this.player1 = player1;
         this.player2 = player2;
@@ -52,8 +51,8 @@ public class Game {
         String copiedCurrentPlayer = currentPlayer;
         int copiedPlayer1Score = player1Score;
         int copiedPlayer2Score = player2Score;
-        return new Game(copiedPlayer1, copiedPlayer2, copiedPlayer1Score,
-                        copiedPlayer2Score, copiedCurrentPlayer, copiedBoard);
+        return new Game(copiedPlayer1, copiedPlayer2, copiedPlayer1Score, copiedPlayer2Score,
+                        copiedCurrentPlayer, copiedBoard);
     }
 
     /**
@@ -72,7 +71,7 @@ public class Game {
      * @return the name of the winner, or null if no player is the winner or the game is not over
      */
     //@ pure;
-    public String getWinner(){
+    public String getWinner() {
         if (player1Score > player2Score) {
             return player1;
         } else if (player1Score < player2Score) {
@@ -88,7 +87,7 @@ public class Game {
      * @return the name of the player whose turn it is
      */
     //@ pure;
-    public String getTurn(){
+    public String getTurn() {
         return currentPlayer;
     }
 
@@ -101,17 +100,17 @@ public class Game {
     //@ pure;
     public int[] getValidMoves() {
         Set<Integer> moves = new HashSet<>();
-        if(board.isFull()){
+        if (board.isFull()) {
             return null;
         }
-        for(int i=0; board.isLine(i); i++){
-            if(isValidMove(i)){
+        for (int i = 0; board.isLine(i); i++) {
+            if (isValidMove(i)) {
                 moves.add(i);
             }
         }
         int[] result = new int[moves.size()];
-        int i =0;
-        for(int move : moves){
+        int i = 0;
+        for (int move : moves) {
             result[i++] = move;
         }
         return result;
@@ -125,8 +124,9 @@ public class Game {
      */
     //@ ensures \result <==> (\exists int i; Arrays.asList(getValidMoves()).contains(location); i==location);
     //@ pure;
-    public boolean isValidMove(int location){
+    public boolean isValidMove(int location) {
         return !gameOver() && board.isEmptyField(location);
+        //check if player number is current player?
     }
 
     /**
@@ -135,9 +135,9 @@ public class Game {
      * @param location the move to play
      */
     //@ requires isValidMove(location);
-    public void doMove(int location){
-        if(isValidMove(location)){
-            if(currentPlayer.equals(player1)){
+    public void doMove(int location) {
+        if (isValidMove(location)) {
+            if (currentPlayer.equals(player1)) {
                 //TODO make class move to combine location and player number?
                 board.setLine(location, 1);
                 currentPlayer = player2;
@@ -155,10 +155,7 @@ public class Game {
      *
      * @return the game situation as a String
      */
-    public String toString(){
-        return board.toString() + "\n"
-                + "Player 1 score = " + player1Score + "\n"
-                + "Player 2 score = " + player2Score + "\n"
-                + currentPlayer;
+    public String toString() {
+        return board.toString() + "\n" + "Player 1 score = " + player1Score + "\n" + "Player 2 score = " + player2Score + "\n" + currentPlayer;
     }
 }
