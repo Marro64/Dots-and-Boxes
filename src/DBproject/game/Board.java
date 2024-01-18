@@ -9,12 +9,18 @@ public class Board {
      */
     public static final int DIM = 6;
     private static final String DELIM = "       ";
-    private static final String[] NUMBERING = {" . 0 . 1 . 2 . 3 . 4 . ",
-            " 5   6   7   8   9   10 ", " . 11 . 12 . 13 . 14 . 15 . ",
-            " 16   17   18   19   20   21 ", " . 22 . 23 . 24 . 25 . 26 . ",
-            " 27   28   29   30   31   32 ", " . 33 . 34 . 35 . 36 . 37 . ",
-            " 38   39   40   41   42   43 ", " . 44 . 45 . 46 . 47 . 48 . ",
-            " 49   50   51   52   53   54 ", " . 55 . 56 . 57 . 58 . 59 . "};
+    private static final String[] NUMBERING = {
+            " . 0  . 1  . 2  . 3  . 4  . ",
+            " 5    6    7    8    9    10 ",
+            " . 11 . 12 . 13 . 14 . 15 . ",
+            " 16   17   18   19   20   21 ",
+            " . 22 . 23 . 24 . 25 . 26 . ",
+            " 27   28   29   30   31   32 ",
+            " . 33 . 34 . 35 . 36 . 37 . ",
+            " 38   39   40   41   42   43 ",
+            " . 44 . 45 . 46 . 47 . 48 . ",
+            " 49   50   51   52   53   54 ",
+            " . 55 . 56 . 57 . 58 . 59 . "};
     //private static final String HORIZONTAL_LINE = NUMBERING[1];
     /*@
         public invariant lines.length < (DIM-1)*DIM + (DIM-1)*DIM ;
@@ -72,11 +78,12 @@ public class Board {
      *
      * @return the horizontal index belonging to the (row,col)-field
      */
-    /*@ requires row >= 0 && row <= DIM;
-    requires col >= 0 && col < DIM;
+    /*@ requires row >= 0 && row < DIM;
+    requires col >= 0 && col < DIM -1;
      @*/
     // row = 1; 11
     // row = 2; 22
+    // row = 5; 55
     public int horizontalIndex(int row, int col) {
         return (row*(2*DIM-1)) + col;
     }
@@ -87,12 +94,14 @@ public class Board {
      *
      * @return the vertical index belonging to the (row,col)-field
      */
-    /*@ requires row >= 0 && row < DIM;
-    requires col >= 0 && col <= DIM;
+    /*@ requires row >= 0 && row < DIM -1;
+    requires col >= 0 && col < DIM;
      @*/
     // row = 0 ; 5
     // row = 1; 10+6
     //row = 2; 15 + 12
+    // row = 4; 25 + 20 + 4
+    //row = 5; 30 + 25 + 5
     public int verticalIndex(int row, int col) {
         return (row+1)*(DIM-1) + (row*(DIM-1) + row) + col;
     }
@@ -118,6 +127,17 @@ public class Board {
     //@ pure;
     public boolean isBox(int location) {
         return (location >= 0) && (location < (DIM-1)*(DIM-1));
+    }
+
+    /**
+     * Returns true if location is a valid location of a box represented by (row, column) on the board.
+     *
+     * @return true if 0 <= row < (DIM-1) && 0 <= column < (DIM-1)
+     */
+    //@ ensures row >= 0 && row < (DIM-1)*(DIM-1) && column >= 0 && column < (DIM-1)*(DIM-1) ==> \result == true;
+    //@ pure;
+    public boolean isBox(int row, int column) {
+        return (row >= 0) && (row < (DIM-1)) && (column >= 0) && (column < (DIM-1));
     }
 
     /**
@@ -199,12 +219,12 @@ public class Board {
      * @param column the column of the box
      * @return the content of the box
      */
-    /*@
+    /*@ requires isBox(row, column);
     ensures \result == 0 || \result == 1 || \result == 2;
     pure;
      @*/
     public int getBox(int row, int column){
-        return boxes[row*(DIM-1) +  column];
+        return boxes[row*(DIM-1) + column];
     }
 
     /**
@@ -243,10 +263,10 @@ public class Board {
      */
     public String toString() {
         String s = "";
-        for (int i = 0; i < (DIM*DIM)-2; i++) {
+        for (int i = 0; i < (DIM+DIM)-1; i++) {
             String row = "";
             if (i % 2 == 0) {
-                for (int j = 0; j < DIM ; j++) {
+                for (int j = 0; j < DIM - 1; j++) {
                     row += ".";
                     //TODO: give different players different marks of lines
                     if (!(getHorizontalLine(i/2, j) == 0)) {
@@ -255,25 +275,37 @@ public class Board {
                         row += " " + " " + " ";
                     }
                 }
+                row += ".";
             }
             else{
-                for (int j = 0; j < DIM ; j++) {
+                for (int j = 0; j < DIM - 1; j++) {
                     //TODO: give different players different marks of lines
-                    if (!(getVerticalLine(j,i/2) == 0)){
-                        row += getVerticalLine(j,i/2) + " ";
+                    if (!(getVerticalLine(i/2, j) == 0)){
+                        row += getVerticalLine(i/2, j) + " ";
                     } else {
                         row += " " + " ";
                     }
-                    if(!(getBox(j,(i/2))==0)){
-                        row += getBox(j,(i/2)) + " ";
+                    if(!(getBox(i/2, j)==0)){
+                        row += getBox(i/2, j) + " ";
                     } else {
                         row += " " + " ";
                     }
                 }
+                if (!(getVerticalLine(i/2, DIM-1) == 0)){
+                    row += getVerticalLine(i/2, DIM -1);
+                } else {
+                    row += " ";
+                }
             }
-            s = s + row + DELIM + NUMBERING[i * 2] + "\n";
+            s = s + row + DELIM + NUMBERING[i] + "\n";
         }
         return s;
     }
 
+    public static void main(String[] args){
+        Board board = new Board();
+        board.setLine(5, 1);
+        board.setLine(40, 2);
+        System.out.println(board.toString());
+    }
 }
