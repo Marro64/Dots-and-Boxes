@@ -8,5 +8,6 @@ public interface ClientListener {
     void userList(String[] users);
     void newGame();
     void receiveMove(int location);
+    void receiveError();
     void gameOver(String reason, String winner);
 }
