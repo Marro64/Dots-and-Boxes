@@ -141,6 +141,7 @@ public class Game {
                 //TODO make class move to combine location and player number?
                 board.setLine(location, 1);
                 currentPlayer = player2;
+                //TODO set box to player if it completed a box (add setbox() to board)
             } else {
                 board.setLine(location, 2);
                 currentPlayer = player1;

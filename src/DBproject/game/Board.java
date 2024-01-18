@@ -302,6 +302,9 @@ public class Board {
         board.setLine(5, 1);
         board.setLine(40, 2);
         board.setLine(12,1);
+        board.setLine(0,1);
+        board.setLine(6,1);
+        board.setLine(11,1);
         System.out.println(board.toString());
     }
 }
