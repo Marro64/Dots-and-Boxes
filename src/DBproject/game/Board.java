@@ -1,5 +1,7 @@
 package DBproject.game;
 
+import java.security.InvalidParameterException;
+
 /**
  * Board for the Dots and Boxes game.
  */
@@ -80,8 +82,11 @@ public class Board {
     // row = 2; 22
     // row = 5; 55
     public int horizontalIndex(int row, int col) {
-        //2*DIM-1 lines in between 1 row
-        return (row * (2 * DIM - 1)) + col;
+        if (row >= 0 && row < DIM && col >= 0 && col < DIM - 1) {
+            //2*DIM-1 lines in between 1 row
+            return (row * (2 * DIM - 1)) + col;
+        }
+        throw new IllegalArgumentException("inputs are not indices on the board");
     }
 
     /**
@@ -100,7 +105,10 @@ public class Board {
     // row = 4; 25 + 20 + 4
     //row = 5; 30 + 25 + 5
     public int verticalIndex(int row, int col) {
-        return (row + 1) * (DIM - 1) + (row * (DIM - 1) + row) + col;
+        if (row >= 0 && row < DIM - 1 && col >= 0 && col < DIM) {
+            return (row + 1) * (DIM - 1) + (row * (DIM - 1) + row) + col;
+        }
+        throw new IllegalArgumentException("inputs are not indices on the board");
     }
 
     /**
@@ -114,10 +122,13 @@ public class Board {
         pure
     */
     public int[] getRowColHorizontal(int location) {
-        int[] result = new int[2];
-        result[1] = location % (DIM + DIM - 1);
-        result[0] = (location - result[1]) / (DIM + DIM - 1);
-        return result;
+        if (isHorizontalLine(location)) {
+            int[] result = new int[2];
+            result[1] = location % (DIM + DIM - 1);
+            result[0] = (location - result[1]) / (DIM + DIM - 1);
+            return result;
+        }
+        throw new IllegalArgumentException("location is not horizontal line");
     }
 
     /**
@@ -131,11 +142,14 @@ public class Board {
         pure
     */
     public int[] getRowColVertical(int location) {
-        int[] result = new int[2];
-        result[1] = (location - 5) % (DIM + DIM - 1);
-        //result[0] = (location - result[1]) % (DIM -1);
-        result[0] = (location - result[1]) / (DIM + DIM - 1);
-        return result;
+        if (isVerticalLine(location)) {
+            int[] result = new int[2];
+            result[1] = (location - 5) % (DIM + DIM - 1);
+            //result[0] = (location - result[1]) % (DIM -1);
+            result[0] = (location - result[1]) / (DIM + DIM - 1);
+            return result;
+        }
+        throw new IllegalArgumentException("location is not vertical line");
     }
 
     /**
@@ -159,6 +173,9 @@ public class Board {
         pure
     */
     public boolean isHorizontalLine(int location) {
+        if (!isLine(location)) {
+            return false;
+        }
         for (int row = 0; row < DIM; row++) {
             for (int col = 0; col < DIM - 1; col++) {
                 if (horizontalIndex(row, col) == location) {
@@ -179,6 +196,9 @@ public class Board {
         pure
     */
     public boolean isVerticalLine(int location) {
+        if (!isLine(location)) {
+            return false;
+        }
         for (int row = 0; row < DIM - 1; row++) {
             for (int col = 0; col < DIM; col++) {
                 if (verticalIndex(row, col) == location) {
@@ -226,6 +246,9 @@ public class Board {
     pure;
      @*/
     public int getLine(int location) {
+        if (!isLine(location)) {
+            throw new IllegalArgumentException("location is not valid index for a line");
+        }
         return lines[location];
     }
 
@@ -242,13 +265,16 @@ public class Board {
         pure;
      @*/
     public int getHorizontalLine(int row, int column) {
+        if (!isHorizontalLine(horizontalIndex(row, column))) {
+            throw new IllegalArgumentException("indices do not represent a horizontal line");
+        }
         return lines[horizontalIndex(row, column)];
     }
 
     /**
      * Returns the content of a vertical line represented by (row, column) pair.
      *
-     * @param row    the row of the line
+     * @param row the row of the line
      * @param column the column of the line
      * @return the content of the line
      */
@@ -258,6 +284,9 @@ public class Board {
     pure;
      @*/
     public int getVerticalLine(int row, int column) {
+        if (!isVerticalLine(verticalIndex(row, column))) {
+            throw new IllegalArgumentException("indices do not represent a vertical line");
+        }
         return lines[verticalIndex(row, column)];
     }
 
@@ -272,6 +301,9 @@ public class Board {
     pure;
      @*/
     public boolean isEmptyField(int location) {
+        if (!isLine(location)) {
+            throw new IllegalArgumentException("location is not valid index for a line");
+        }
         return getLine(location) == 0;
     }
 
@@ -286,6 +318,9 @@ public class Board {
     pure;
      @*/
     public int getBox(int location) {
+        if (!isBox(location)) {
+            throw new IllegalArgumentException("location is not valid index for a box");
+        }
         return boxes[location];
     }
 
@@ -301,6 +336,9 @@ public class Board {
     pure;
      @*/
     public int getBox(int row, int column) {
+        if (!isBox(row, column)) {
+            throw new IllegalArgumentException("indices do not represent a box on the board");
+        }
         return boxes[row * (DIM - 1) + column];
     }
 
@@ -329,6 +367,9 @@ public class Board {
     ensures getLine(location) == playerNumber;
      @*/
     public void setLine(int location, int playerNumber) {
+        if (!isLine(location)) {
+            throw new IllegalArgumentException("location is not valid index of a line");
+        }
         lines[location] = playerNumber;
     }
 
@@ -341,6 +382,9 @@ public class Board {
     ensures getBox(location) == playerNumber;
      @*/
     public void setBox(int location, int playerNumber) {
+        if (!isBox(location)) {
+            throw new IllegalArgumentException("location is not valid index of a box");
+        }
         boxes[location] = playerNumber;
     }
 
@@ -360,6 +404,9 @@ public class Board {
         pure
     */
     public int[] completeBox(int location) {
+        if (!isLine(location)) {
+            throw new IllegalArgumentException("location is not valid index of a line");
+        }
         int[] result = new int[2];
         if (isHorizontalLine(location)) {
             for (int col = 0; col < DIM - 1; col++) {
@@ -409,6 +456,9 @@ public class Board {
         pure
     */
     public int completeBoxAbove(int location) {
+        if(!isHorizontalLine(location) || getRowColHorizontal(location)[0]==DIM-1){
+            throw new IllegalArgumentException("location is not horizontal line that has a box above it");
+        }
         if (getLine(location + (DIM - 1)) == 0 || getLine(location + DIM) == 0 || getLine(
                 location + (DIM + DIM - 1)) == 0) {
             return -1;
@@ -432,6 +482,9 @@ public class Board {
         pure
     */
     public int completeBoxUnder(int location) {
+        if(!isHorizontalLine(location)||getRowColHorizontal(location)[0] == 0){
+            throw new IllegalArgumentException("location is not horizontal line that has a box under it");
+        }
         if (getLine(location - (DIM - 1)) == 0 || getLine(location - DIM) == 0 || getLine(
                 location - (DIM + DIM - 1)) == 0) {
             return -1;
@@ -457,6 +510,9 @@ public class Board {
         pure
     */
     public int completeBoxRight(int location) {
+        if(!isVerticalLine(location)||getRowColVertical(location)[1]== DIM-1){
+            throw new IllegalArgumentException("location is not vertical line that has a box right of it");
+        }
         if (getLine(location + 1) == 0 || getLine(location + DIM) == 0 || getLine(
                 location - (DIM - 1)) == 0) {
             return -1;
@@ -480,6 +536,9 @@ public class Board {
         pure
     */
     public int completeBoxLeft(int location) {
+        if(!isVerticalLine(location)||getRowColVertical(location)[1]== 0){
+            throw new IllegalArgumentException("location is not vertical line that has a box left of it");
+        }
         if (getLine(location - 1) == 0 || getLine(location - DIM) == 0 || getLine(
                 location + (DIM - 1)) == 0) {
             return -1;
@@ -534,6 +593,26 @@ public class Board {
             s = s + row + DELIM + NUMBERING[i] + "\n";
         }
         return s;
+    }
+
+    /**
+     * compares this board to another board, returns true if they are the same, or false if not.
+     *
+     * @param board you want to compare this board to
+     * @return true if the board is the same as this board, false if not
+     */
+    public boolean compareTo(Board board) {
+        for (int i = 0; i < (DIM - 1) * DIM + (DIM - 1) * DIM; i++) {
+            if (this.lines[i] != board.lines[i]) {
+                return false;
+            }
+        }
+        for (int i = 0; i < (DIM - 1) * (DIM - 1); i++) {
+            if (this.boxes[i] != board.boxes[i]) {
+                return false;
+            }
+        }
+        return true;
     }
 
     //    public static void main(String[] args) {

@@ -55,9 +55,33 @@ public class Game {
                         copiedCurrentPlayer, copiedBoard);
     }
 
+    /**
+     * returns the name of player1.
+     *
+     * @return the name of player1
+     */
+    /*@
+        pure;
+    */
     public String getPlayer1(){return this.player1;}
 
+    /**
+     * return the name of player2.
+     *
+     * @return the name of player2
+     */
+    /*@
+        pure;
+    */
     public String getPlayer2(){return this.player2;}
+
+    /**
+     * return the board of the game.
+     *
+     * @return the board of the game
+     */
+    public Board getBoard(){ return this.board; }
+
     /**
      * Check if the game is over, i.e., there are no more moves available.
      *

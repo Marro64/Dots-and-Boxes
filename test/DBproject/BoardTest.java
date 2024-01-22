@@ -2,12 +2,10 @@ package DBproject;
 
 import DBproject.game.Board;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BoardTest {
     private Board board;
@@ -187,8 +185,6 @@ public class BoardTest {
         board.setLine(16, 1);
         int[] location = board.getRowColVertical(16);
         assertEquals(1, board.getVerticalLine(location[0], location[1]));
-        location = board.getRowColVertical(0);
-        assertEquals(0, board.getVerticalLine(location[0], location[1]));
     }
 
     @Test
@@ -307,5 +303,17 @@ public class BoardTest {
         board.setLine(13, 2);
         assertEquals(12, board.completeBox(24)[0]);
         assertEquals(7, board.completeBox(24)[1]);
+    }
+
+    @Test
+    public void testCompareTo(){
+        Board board2 = new Board();
+        assertTrue(board.compareTo(board2));
+        board2.setLine(1,1);
+        assertFalse(board.compareTo(board2));
+        Board board3 = new Board();
+        assertTrue(board.compareTo(board3));
+        board3.setBox(2,1);
+        assertFalse(board.compareTo(board3));
     }
 }
