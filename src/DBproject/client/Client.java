@@ -90,7 +90,7 @@ public class Client {
         for (ClientListener clientListener : clientListeners) {
             clientListener.newGame();
         }
-        game = new Game();
+        //game = new Game();
         this.player1 = player1; // Temporary!!
         this.player2 = player2; // Temporary!!
     }

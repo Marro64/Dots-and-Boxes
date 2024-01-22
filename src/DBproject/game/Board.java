@@ -81,6 +81,7 @@ public class Board {
     // row = 2; 22
     // row = 5; 55
     public int horizontalIndex(int row, int col) {
+        //2*DIM-1 lines in between 1 row
         return (row * (2 * DIM - 1)) + col;
     }
 
@@ -113,10 +114,10 @@ public class Board {
         requires isHorizontalLine(location);
         pure
     */
-    public int[] getRowColHorizontal(int location){
+    public int[] getRowColHorizontal(int location) {
         int[] result = new int[2];
-        result[1] = location % (DIM+DIM-1);
-        result[0] = (location - result[1]) / (DIM+DIM-1);
+        result[1] = location % (DIM + DIM - 1);
+        result[0] = (location - result[1]) / (DIM + DIM - 1);
         return result;
     }
 
@@ -130,11 +131,11 @@ public class Board {
         requires isVerticalLine(location);
         pure
     */
-    public int[] getRowColVertical(int location){
+    public int[] getRowColVertical(int location) {
         int[] result = new int[2];
-        result[1] = (location - 5) % (DIM+DIM-1);
+        result[1] = (location - 5) % (DIM + DIM - 1);
         //result[0] = (location - result[1]) % (DIM -1);
-        result[0] = (location - result[1]) / (DIM+DIM-1);
+        result[0] = (location - result[1]) / (DIM + DIM - 1);
         return result;
     }
 
@@ -158,10 +159,10 @@ public class Board {
         requires isLine(location);
         pure
     */
-    public boolean isHorizontalLine(int location){
-        for(int row = 0; row< DIM ; row++){
-            for (int col=0 ; col< DIM -1; col++){
-                if (horizontalIndex(row,col)==location){
+    public boolean isHorizontalLine(int location) {
+        for (int row = 0; row < DIM; row++) {
+            for (int col = 0; col < DIM - 1; col++) {
+                if (horizontalIndex(row, col) == location) {
                     return true;
                 }
             }
@@ -178,23 +179,26 @@ public class Board {
         requires isLine(location);
         pure
     */
-    public boolean isVerticalLine(int location){
-        for(int row = 0; row< DIM - 1 ; row++){
-            for (int col=0 ; col<DIM ; col++){
-                if (verticalIndex(row,col)==location){
+    public boolean isVerticalLine(int location) {
+        for (int row = 0; row < DIM - 1; row++) {
+            for (int col = 0; col < DIM; col++) {
+                if (verticalIndex(row, col) == location) {
                     return true;
                 }
             }
         }
         return false;
     }
+
     /**
      * Returns true if location is a valid location of a box on the board.
      *
      * @return true if 0 <= location < (DIM-1)*(DIM-1)
      */
-    //@ ensures location >= 0 && location < (DIM-1)*(DIM-1) ==> \result == true;
-    //@ pure;
+    /*@
+        ensures location >= 0 && location < (DIM-1)*(DIM-1) ==> \result == true;
+        pure;
+    */
     public boolean isBox(int location) {
         return (location >= 0) && (location < (DIM - 1) * (DIM - 1));
     }
@@ -204,8 +208,10 @@ public class Board {
      *
      * @return true if 0 <= row < (DIM-1) && 0 <= column < (DIM-1)
      */
-    //@ ensures row >= 0 && row < (DIM-1)*(DIM-1) && column >= 0 && column < (DIM-1)*(DIM-1) ==> \result == true;
-    //@ pure;
+    /*@
+        ensures row >= 0 && row < (DIM-1) && column >= 0 && column < (DIM-1) ==> \result == true;
+        pure;
+    */
     public boolean isBox(int row, int column) {
         return (row >= 0) && (row < (DIM - 1)) && (column >= 0) && (column < (DIM - 1));
     }
@@ -232,9 +238,9 @@ public class Board {
      * @return the content of the line
      */
     /*@
-    requires isHorizontalLine(horizontalIndex(row,column));
-    ensures \result == 0 || \result == 1 || \result == 2;
-    pure;
+        requires isHorizontalLine(horizontalIndex(row,column));
+        ensures \result == 0 || \result == 1 || \result == 2;
+        pure;
      @*/
     public int getHorizontalLine(int row, int column) {
         return lines[horizontalIndex(row, column)];
@@ -312,7 +318,7 @@ public class Board {
                 return false;
             }
         }
-        return false;
+        return true;
     }
 
     /**
@@ -357,12 +363,12 @@ public class Board {
     public int[] completeBox(int location) {
         int[] result = new int[2];
         if (isHorizontalLine(location)) {
-            for (int col = 0; col< DIM -1; col++){
-                if (location == horizontalIndex(0, col)){
+            for (int col = 0; col < DIM - 1; col++) {
+                if (location == horizontalIndex(0, col)) {
                     result[1] = completeBoxAbove(location);
                     result[0] = -1;
                     return result;
-                } else if (location == horizontalIndex(DIM-1, col)) {
+                } else if (location == horizontalIndex(DIM - 1, col)) {
                     result[0] = completeBoxUnder(location);
                     result[1] = -1;
                     return result;
@@ -372,12 +378,12 @@ public class Board {
             result[1] = completeBoxUnder(location);
             return result;
         }
-        for (int row = 0; row< DIM -1; row++){
-            if (location == getVerticalLine(row, 0)){
+        for (int row = 0; row < DIM - 1; row++) {
+            if (location == getVerticalLine(row, 0)) {
                 result[1] = completeBoxRight(location);
                 result[0] = -1;
                 return result;
-            } else if (location == getVerticalLine(row,DIM-1)) {
+            } else if (location == getVerticalLine(row, DIM - 1)) {
                 result[0] = completeBoxLeft(location);
                 result[1] = -1;
                 return result;
@@ -398,16 +404,17 @@ public class Board {
      */
     /*@
         requires isHorizontalLine(location);
+        requires getRowColHorizontal(location)[0]!=DIM-1;
         ensures getLine(location+(DIM-1))==0 || getLine(location+DIM)==0
                 || getLine(location+(DIM+DIM-1))==0 ==> \result == -1;
         pure
     */
-    public int completeBoxAbove(int location){
-        if (getLine(location+(DIM-1))==0 || getLine(location+DIM)==0
-                || getLine(location+(DIM+DIM-1))==0){
+    public int completeBoxAbove(int location) {
+        if (getLine(location + (DIM - 1)) == 0 || getLine(location + DIM) == 0 || getLine(
+                location + (DIM + DIM - 1)) == 0) {
             return -1;
         }
-        return getRowColHorizontal(location)[1] + (getRowColHorizontal(location)[0]*(DIM-1));
+        return getRowColHorizontal(location)[1] + (getRowColHorizontal(location)[0] * (DIM - 1));
     }
 
     /**
@@ -420,16 +427,18 @@ public class Board {
      */
     /*@
         requires isHorizontalLine(location);
+        requires getRowColHorizontal(location)[0] != 0;
         ensures getLine(location-(DIM-1))==0 || getLine(location-DIM)==0
                 || getLine(location-(DIM+DIM-1))==0 ==> \result == -1;
         pure
     */
-    public int completeBoxUnder(int location){
-        if (getLine(location-(DIM-1))==0 || getLine(location-DIM)==0
-                || getLine(location-(DIM+DIM-1))==0){
+    public int completeBoxUnder(int location) {
+        if (getLine(location - (DIM - 1)) == 0 || getLine(location - DIM) == 0 || getLine(
+                location - (DIM + DIM - 1)) == 0) {
             return -1;
         }
-        return getRowColHorizontal(location)[1] + ((getRowColHorizontal(location)[0]-1)*(DIM-1));
+        return getRowColHorizontal(location)[1] + ((getRowColHorizontal(
+                location)[0] - 1) * (DIM - 1));
 
     }
 
@@ -443,16 +452,17 @@ public class Board {
      */
     /*@
         requires isVerticalLine(location);
+        requires getRowColVertical(location)[1]!= DIM-1;
         ensures getLine(location+1)==0 || getLine(location+DIM)==0
                 || getLine(location-(DIM-1))==0 ==> \result == -1;
         pure
     */
-    public int completeBoxRight(int location){
-        if (getLine(location+1)==0 || getLine(location+DIM)==0
-                || getLine(location-(DIM-1))==0){
+    public int completeBoxRight(int location) {
+        if (getLine(location + 1) == 0 || getLine(location + DIM) == 0 || getLine(
+                location - (DIM - 1)) == 0) {
             return -1;
         }
-        return getRowColVertical(location)[1] + (getRowColVertical(location)[0]*(DIM-1));
+        return getRowColVertical(location)[1] + (getRowColVertical(location)[0] * (DIM - 1));
     }
 
     /**
@@ -465,16 +475,17 @@ public class Board {
      */
     /*@
         requires isVerticalLine(location);
+        requires getRowColVertical(location)[1] != 0;
         ensures getLine(location-1)==0 || getLine(location-DIM)==0
                 || getLine(location+(DIM-1))==0 ==> \result == -1;
         pure
     */
-    public int completeBoxLeft(int location){
-        if (getLine(location-1)==0 || getLine(location-DIM)==0
-                || getLine(location+(DIM-1))==0){
+    public int completeBoxLeft(int location) {
+        if (getLine(location - 1) == 0 || getLine(location - DIM) == 0 || getLine(
+                location + (DIM - 1)) == 0) {
             return -1;
         }
-        return (getRowColVertical(location)[1]-1) + (getRowColVertical(location)[0] * (DIM-1));
+        return (getRowColVertical(location)[1] - 1) + (getRowColVertical(location)[0] * (DIM - 1));
     }
 
     /**
@@ -526,15 +537,15 @@ public class Board {
         return s;
     }
 
-//    public static void main(String[] args) {
-//        Board board = new Board();
-//        board.setLine(5, 1);
-//        board.setLine(40, 2);
-//        board.setLine(12,1);
-//        board.setLine(0,1);
-//        board.setLine(6,1);
-//        board.setLine(11,1);
-//        board.setBox(0,1);
-//        System.out.println(board.toString());
-//    }
+    //    public static void main(String[] args) {
+    //        Board board = new Board();
+    //        board.setLine(5, 1);
+    //        board.setLine(40, 2);
+    //        board.setLine(12,1);
+    //        board.setLine(0,1);
+    //        board.setLine(6,1);
+    //        board.setLine(11,1);
+    //        board.setBox(0,1);
+    //        System.out.println(board.toString());
+    //    }
 }

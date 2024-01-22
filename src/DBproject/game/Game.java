@@ -141,27 +141,27 @@ public class Game {
             if (currentPlayer.equals(player1)) {
                 //TODO make class move to combine location and player number?
                 board.setLine(location, 1);
-                if(first != -1){
-                    board.setBox(first,1);
-                    player1Score+=1;
+                if (first != -1) {
+                    board.setBox(first, 1);
+                    player1Score += 1;
                     return;
                 }
-                if(second != -1){
-                    board.setBox(second,1);
-                    player1Score+=1;
+                if (second != -1) {
+                    board.setBox(second, 1);
+                    player1Score += 1;
                     return;
                 }
                 currentPlayer = player2;
             } else {
                 board.setLine(location, 2);
-                if(first != -1){
-                    board.setBox(first,2);
-                    player2Score+=1;
+                if (first != -1) {
+                    board.setBox(first, 2);
+                    player2Score += 1;
                     return;
                 }
-                if(second != -1){
-                    board.setBox(second,2);
-                    player2Score+=1;
+                if (second != -1) {
+                    board.setBox(second, 2);
+                    player2Score += 1;
                     return;
                 }
                 currentPlayer = player1;
@@ -177,29 +177,28 @@ public class Game {
      * @return the game situation as a String
      */
     public String toString() {
-        return board.toString() + "\n" + "Player 1 score = " + player1Score + "\n"
-                + "Player 2 score = " + player2Score + "\n" + currentPlayer;
+        return board.toString() + "\n" + "Player " + player1 + " score = " + player1Score + "\n" + "Player " + player2 + "score = " + player2Score + "\n" + currentPlayer;
     }
 
-//    public static void main(String[] args) {
-//        Game game = new Game("firstPlayer", "secondPlayer");
-//        game.doMove(0);
-//        game.doMove(10);
-//        game.doMove(5);
-//        game.doMove(6);
-//        game.doMove(11);
-//        game.doMove(17);
-//        game.doMove(18);
-//        game.doMove(23);
-//        game.doMove(12);
-//        game.doMove(4);
-//        game.doMove(10);
-//        game.doMove(15);
-//        game.doMove(9);
-//        game.doMove(26);
-//        game.doMove(31);
-//        game.doMove(37);
-//        game.doMove(32);
-//        System.out.println(game);
-//    }
+    //    public static void main(String[] args) {
+    //        Game game = new Game("firstPlayer", "secondPlayer");
+    //        game.doMove(0);
+    //        game.doMove(10);
+    //        game.doMove(5);
+    //        game.doMove(6);
+    //        game.doMove(11);
+    //        game.doMove(17);
+    //        game.doMove(18);
+    //        game.doMove(23);
+    //        game.doMove(12);
+    //        game.doMove(4);
+    //        game.doMove(10);
+    //        game.doMove(15);
+    //        game.doMove(9);
+    //        game.doMove(26);
+    //        game.doMove(31);
+    //        game.doMove(37);
+    //        game.doMove(32);
+    //        System.out.println(game);
+    //    }
 }
