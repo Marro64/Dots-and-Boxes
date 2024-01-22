@@ -9,8 +9,6 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.AbstractQueue;
-import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.concurrent.SynchronousQueue;
@@ -21,7 +19,7 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
     private Client client;
     private UIState state;
     private UIState nextState;
-    private SynchronousQueue<UIState> incomingState;
+    private final SynchronousQueue<UIState> incomingState;
 
     InetAddress host = null;
     int port = -1;
