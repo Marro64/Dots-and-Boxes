@@ -1,6 +1,6 @@
 package DBproject.client;
 
-public class ClientTUI implements ClientListener{
+public class ClientTUI implements ClientListener {
     @Override
     public void connectionLost() {
 
@@ -36,16 +36,21 @@ public class ClientTUI implements ClientListener{
 
     }
 
+    @Override
+    public void receiveError() {
+
+    }
 
     @Override
     public void gameOver(String reason, String winner) {
 
     }
 
-    public void runTUI(){
+    public void runTUI() {
 
     }
-    public static void main(String[] args){
+
+    public static void main(String[] args) {
 
     }
 }
