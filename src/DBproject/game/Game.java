@@ -55,6 +55,9 @@ public class Game {
                         copiedCurrentPlayer, copiedBoard);
     }
 
+    public String getPlayer1(){return this.player1;}
+
+    public String getPlayer2(){return this.player2;}
     /**
      * Check if the game is over, i.e., there are no more moves available.
      *

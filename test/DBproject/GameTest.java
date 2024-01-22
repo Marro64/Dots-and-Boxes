@@ -23,6 +23,13 @@ public class GameTest {
 
     @Test
     public void testDeepCopy(){
+        game.doMove(1);
+        game.doMove(6);
+        game.doMove(7);
+        Game copiedGame = game.deepCopy();
+        assertEquals(game.getTurn(), copiedGame.getTurn());
+        assertEquals(game.getWinner(), copiedGame.getWinner());
+        copiedGame.doMove(12);
 
     }
 }
