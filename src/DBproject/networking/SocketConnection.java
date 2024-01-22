@@ -88,6 +88,7 @@ public abstract class SocketConnection {
      * @return true if the message was sent successfully, false if the connection was closed
      */
     protected boolean sendMessage(String message) {
+        System.out.println("SocketConnection.sendMessage: " + message);
         try {
             out.write(message);
             out.newLine();

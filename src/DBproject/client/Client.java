@@ -4,6 +4,7 @@ import DBproject.game.Game;
 import DBproject.players.Player;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,10 +14,8 @@ public class Client {
     private Game game;
     private Player player;
     private String username;
-    public String player1; // Temporary!!
-    public String player2; // Temporary!!
 
-    public Client(String host, int port) throws IOException {
+    public Client(InetAddress host, int port) throws IOException {
         clientConnection = new ClientConnection(host, port, this);
         clientListeners = new HashSet<>();
         username = "";
@@ -87,18 +86,24 @@ public class Client {
     }
 
     public void receiveNewGame(String player1, String player2) {
+        game = new Game(player1, player2);
         for (ClientListener clientListener : clientListeners) {
             clientListener.newGame();
         }
-        //game = new Game();
-        this.player1 = player1; // Temporary!!
-        this.player2 = player2; // Temporary!!
     }
 
     public void receiveMove(int location) {
+        System.out.println("client.receiveMove: " + location);
         game.doMove(location);
         for (ClientListener clientListener : clientListeners) {
             clientListener.receiveMove(location);
+        }
+        if(game.getTurn().equals(username)) {
+            System.out.println("client.receiveMove: player goes next");
+            int responseMove = player.determineMove(game);
+            if (responseMove >= 0) {
+                sendMove(responseMove);
+            }
         }
     }
 
@@ -107,14 +112,16 @@ public class Client {
             clientListener.gameOver(reason, winner);
         }
         game = null;
-        player1 = ""; // Temporary!!
-        player2 = ""; // Temporary!!
     }
 
     public void receiveError() {
         for (ClientListener clientListener : clientListeners) {
             clientListener.receiveError();
         }
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
     public Game getGame() {

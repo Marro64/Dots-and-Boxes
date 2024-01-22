@@ -4,6 +4,7 @@ import DBproject.networking.Protocol;
 import DBproject.networking.SocketConnection;
 
 import java.io.IOException;
+import java.net.InetAddress;
 
 /**
  * uses the Protocol to communicate with a server using the framework of SocketConnection.
@@ -11,7 +12,7 @@ import java.io.IOException;
 public class ClientConnection extends SocketConnection {
     private final Client client;
 
-    public ClientConnection(String host, int port, Client client) throws IOException {
+    public ClientConnection(InetAddress host, int port, Client client) throws IOException {
         super(host, port);
         this.client = client;
         super.start();
@@ -32,6 +33,7 @@ public class ClientConnection extends SocketConnection {
      */
     @Override
     protected void handleMessage(String message) {
+        System.out.println("ClientConnection.handleMessage: " + message);
         String[] messageParts = message.split(Protocol.SEPARATOR);
         try {
             String header = messageParts[0];
@@ -71,6 +73,7 @@ public class ClientConnection extends SocketConnection {
                     throw new IllegalArgumentException();
             }
         } catch (IllegalArgumentException ignore) {
+            System.out.println("ClientConnection.receiveMessage: IllegalArgumentException");
         }
     }
 
@@ -86,14 +89,17 @@ public class ClientConnection extends SocketConnection {
     */
     public void sendHello(String clientDescription) {
         assert !clientDescription.contains("~");
-        super.sendMessage(Protocol.HELLO + Protocol.SEPARATOR + clientDescription);
+    super.sendMessage(Protocol.HELLO
+            + Protocol.SEPARATOR + clientDescription
+//            + Protocol.SEPARATOR + Protocol.NAMEDQUEUES
+    );
     }
 
     /*@ requires !username.contains("~");
     */
     public void sendLogin(String username) {
         assert !username.contains("~");
-        super.sendMessage(Protocol.HELLO + Protocol.SEPARATOR + username);
+        super.sendMessage(Protocol.LOGIN + Protocol.SEPARATOR + username);
     }
 
     public void sendList() {
@@ -101,7 +107,7 @@ public class ClientConnection extends SocketConnection {
     }
 
     public void sendQueue() {
-        super.sendMessage(Protocol.QUEUE);
+        super.sendMessage("QUEUE");
     }
 
     public void sendMove(int location) {
