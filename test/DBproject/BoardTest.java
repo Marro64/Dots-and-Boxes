@@ -306,14 +306,14 @@ public class BoardTest {
     }
 
     @Test
-    public void testCompareTo(){
+    public void testCompareTo() {
         Board board2 = new Board();
         assertTrue(board.compareTo(board2));
-        board2.setLine(1,1);
+        board2.setLine(1, 1);
         assertFalse(board.compareTo(board2));
         Board board3 = new Board();
         assertTrue(board.compareTo(board3));
-        board3.setBox(2,1);
+        board3.setBox(2, 1);
         assertFalse(board.compareTo(board3));
     }
 }

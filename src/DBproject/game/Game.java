@@ -87,7 +87,10 @@ public class Game {
      *
      * @return whether the game is over
      */
-    //@ pure;
+    /*@
+        ensures board.isFull();
+        pure
+    */
     public boolean gameOver() {
         return board.isFull();
     }
@@ -97,15 +100,23 @@ public class Game {
      *
      * @return the name of the winner, or null if no player is the winner or the game is not over
      */
-    //@ pure;
+    /*@
+        requires gameOver();
+        ensures gameOver() && player1Score > player2Score ==> \result == player1;
+        ensures gameOver() && player1Score < player2Score ==> \result == player1;
+        ensures gameOver() && player1Score==player2Score ==> \result == null;
+        ensures !gameOver() ==> \result == null;
+        pure
+    */
     public String getWinner() {
-        if (player1Score > player2Score) {
-            return player1;
-        } else if (player1Score < player2Score) {
-            return player2;
-        } else {
-            return null;
+        if(gameOver()){
+            if (player1Score > player2Score) {
+                return player1;
+            } else if (player1Score < player2Score) {
+                return player2;
+            }
         }
+        return null;
     }
 
     /**
@@ -113,7 +124,10 @@ public class Game {
      *
      * @return the name of the player whose turn it is
      */
-    //@ pure;
+    /*@
+        ensures \result == currentPlayer;
+        pure
+    */
     public String getTurn() {
         return currentPlayer;
     }
@@ -123,8 +137,11 @@ public class Game {
      *
      * @return the array of currently valid moves
      */
-    //@ ensures (\forall int location; Arrays.asList(\result).contains(location) ; isValidMove(location));
-    //@ pure;
+    /*@
+        ensures (\forall int location; Arrays.asList(\result).contains(location) ; isValidMove(location));
+        ensures gameOver() ==> \result == null;
+        pure;
+    */
     public int[] getValidMoves() {
         Set<Integer> moves = new HashSet<>();
         if (board.isFull()) {

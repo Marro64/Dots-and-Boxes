@@ -411,10 +411,12 @@ public class Board {
         if (isHorizontalLine(location)) {
             for (int col = 0; col < DIM - 1; col++) {
                 if (location == horizontalIndex(0, col)) {
+                    //location has only box above it
                     result[1] = completeBoxAbove(location);
                     result[0] = -1;
                     return result;
                 } else if (location == horizontalIndex(DIM - 1, col)) {
+                    //location has only box under it
                     result[0] = completeBoxUnder(location);
                     result[1] = -1;
                     return result;
@@ -425,11 +427,13 @@ public class Board {
             return result;
         }
         for (int row = 0; row < DIM - 1; row++) {
-            if (location == getVerticalLine(row, 0)) {
+            if (location == verticalIndex(row, 0)) {
+                //location has only box to the right
                 result[1] = completeBoxRight(location);
                 result[0] = -1;
                 return result;
-            } else if (location == getVerticalLine(row, DIM - 1)) {
+            } else if (location == verticalIndex(row, DIM - 1)) {
+                //location has only box to the left
                 result[0] = completeBoxLeft(location);
                 result[1] = -1;
                 return result;
@@ -461,6 +465,7 @@ public class Board {
         }
         if (getLine(location + (DIM - 1)) == 0 || getLine(location + DIM) == 0 || getLine(
                 location + (DIM + DIM - 1)) == 0) {
+            //the other lines surrounding the box are not all set
             return -1;
         }
         return getRowColHorizontal(location)[1] + (getRowColHorizontal(location)[0] * (DIM - 1));
@@ -487,6 +492,7 @@ public class Board {
         }
         if (getLine(location - (DIM - 1)) == 0 || getLine(location - DIM) == 0 || getLine(
                 location - (DIM + DIM - 1)) == 0) {
+            //the other lines surrounding the box are not all set
             return -1;
         }
         return getRowColHorizontal(location)[1] + ((getRowColHorizontal(
@@ -515,6 +521,7 @@ public class Board {
         }
         if (getLine(location + 1) == 0 || getLine(location + DIM) == 0 || getLine(
                 location - (DIM - 1)) == 0) {
+            //the other lines surrounding the box are not all set
             return -1;
         }
         return getRowColVertical(location)[1] + (getRowColVertical(location)[0] * (DIM - 1));
@@ -536,11 +543,12 @@ public class Board {
         pure
     */
     public int completeBoxLeft(int location) {
-        if(!isVerticalLine(location)||getRowColVertical(location)[1]== 0){
+        if(!isVerticalLine(location) || getRowColVertical(location)[1] == 0){
             throw new IllegalArgumentException("location is not vertical line that has a box left of it");
         }
         if (getLine(location - 1) == 0 || getLine(location - DIM) == 0 || getLine(
                 location + (DIM - 1)) == 0) {
+            //the other lines surrounding the box are not all set
             return -1;
         }
         return (getRowColVertical(location)[1] - 1) + (getRowColVertical(location)[0] * (DIM - 1));
@@ -558,6 +566,7 @@ public class Board {
             String row = "";
             if (i % 2 == 0) {
                 for (int j = 0; j < DIM - 1; j++) {
+                    //printing horizontal lines (that start with a dot)
                     row += ".";
                     //TODO: give different players different marks of lines
                     if (!(getHorizontalLine(i / 2, j) == 0)) {
@@ -570,6 +579,7 @@ public class Board {
                 row += ".";
             } else {
                 for (int j = 0; j < DIM - 1; j++) {
+                    //printing vertical lines, which also include the content of the boxes on that line
                     //TODO: give different players different marks of lines
                     if (!(getVerticalLine(i / 2, j) == 0)) {
                         //row += getVerticalLine(i / 2, j) + " ";
