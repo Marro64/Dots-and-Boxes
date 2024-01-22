@@ -54,6 +54,7 @@ public class Board {
      */
     /*@ ensures \result != this;
      ensures (\forall int i; (i >= 0 && i < (DIM-1)*DIM + (DIM-1)*DIM); \result.lines[i] == this.lines[i]);
+     pure
      @*/
     public Board deepCopy() {
         Board copiedBoard = new Board();
@@ -74,6 +75,7 @@ public class Board {
      */
     /*@ requires row >= 0 && row < DIM;
     requires col >= 0 && col < DIM -1;
+    pure
      @*/
     // row = 1; 11
     // row = 2; 22
@@ -90,6 +92,7 @@ public class Board {
      */
     /*@ requires row >= 0 && row < DIM -1;
     requires col >= 0 && col < DIM;
+    pure
      @*/
     // row = 0 ; 5
     // row = 1; 10+6
@@ -98,6 +101,41 @@ public class Board {
     //row = 5; 30 + 25 + 5
     public int verticalIndex(int row, int col) {
         return (row + 1) * (DIM - 1) + (row * (DIM - 1) + row) + col;
+    }
+
+    /**
+     * returns the index row and column of a horizontal line.
+     *
+     * @param location of the horizontal line
+     * @return the row and column representation of the horizontal line in an array
+     */
+    /*@
+        requires isHorizontalLine(location);
+        pure
+    */
+    public int[] getRowColHorizontal(int location){
+        int[] result = new int[2];
+        result[1] = location % (DIM+DIM-1);
+        result[0] = (location - result[1]) / (DIM+DIM-1);
+        return result;
+    }
+
+    /**
+     * returns the index row and column of a vertical line.
+     *
+     * @param location of the vertical line
+     * @return the row and column representation of the vertical line in an array
+     */
+    /*@
+        requires isVerticalLine(location);
+        pure
+    */
+    public int[] getRowColVertical(int location){
+        int[] result = new int[2];
+        result[1] = (location - 5) % (DIM+DIM-1);
+        //result[0] = (location - result[1]) % (DIM -1);
+        result[0] = (location - result[1]) / (DIM+DIM-1);
+        return result;
     }
 
     /**
@@ -111,7 +149,45 @@ public class Board {
         return (location >= 0) && (location < (DIM - 1) * DIM + (DIM - 1) * DIM);
     }
 
+    /**
+     * Returns true if location is a valid location of a horizontal line on the board.
+     *
+     * @return true if line is horizontal
+     */
+    /*@
+        requires isLine(location);
+        pure
+    */
+    public boolean isHorizontalLine(int location){
+        for(int row = 0; row< DIM ; row++){
+            for (int col=0 ; col< DIM -1; col++){
+                if (horizontalIndex(row,col)==location){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
+    /**
+     * Returns true if location is a valid location of a vertical line on the board.
+     *
+     * @return true if line is vertical
+     */
+    /*@
+        requires isLine(location);
+        pure
+    */
+    public boolean isVerticalLine(int location){
+        for(int row = 0; row< DIM - 1 ; row++){
+            for (int col=0 ; col<DIM ; col++){
+                if (verticalIndex(row,col)==location){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     /**
      * Returns true if location is a valid location of a box on the board.
      *
@@ -156,6 +232,7 @@ public class Board {
      * @return the content of the line
      */
     /*@
+    requires isHorizontalLine(horizontalIndex(row,column));
     ensures \result == 0 || \result == 1 || \result == 2;
     pure;
      @*/
@@ -171,6 +248,7 @@ public class Board {
      * @return the content of the line
      */
     /*@
+    requires isVerticalLine(verticalIndex(row, column));
     ensures \result == 0 || \result == 1 || \result == 2;
     pure;
      @*/
@@ -250,6 +328,156 @@ public class Board {
     }
 
     /**
+     * Sets the content of box location to playerNumber.
+     *
+     * @param location the box number
+     */
+    /*@ requires isBox(location);
+    ensures getBox(location) == playerNumber;
+     @*/
+    public void setBox(int location, int playerNumber) {
+        boxes[location] = playerNumber;
+    }
+
+    /**
+     * returns the index of the two boxes the line completed, or -1 if it did not complete a box.
+     *
+     * @param location of the line
+     * @return array of two integers which contains the indices of the boxes the line completed,
+     * or -1 if it did not complete a box.
+     */
+    /*@
+        requires isLine(location);
+        ensures isHorizontalLine(location) ==> \result[0] == completeBoxAbove(location);
+        ensures isHorizontalLine(location) ==> \result[1] == completeBoxUnder(location);
+        ensures isVerticalLine(location) ==> \result[0] == completeBoxLeft(location);
+        ensures isVerticalLine(location) ==> \result[1] == completeBoxRight(location);
+        pure
+    */
+    public int[] completeBox(int location) {
+        int[] result = new int[2];
+        if (isHorizontalLine(location)) {
+            for (int col = 0; col< DIM -1; col++){
+                if (location == horizontalIndex(0, col)){
+                    result[1] = completeBoxAbove(location);
+                    result[0] = -1;
+                    return result;
+                } else if (location == horizontalIndex(DIM-1, col)) {
+                    result[0] = completeBoxUnder(location);
+                    result[1] = -1;
+                    return result;
+                }
+            }
+            result[0] = completeBoxAbove(location);
+            result[1] = completeBoxUnder(location);
+            return result;
+        }
+        for (int row = 0; row< DIM -1; row++){
+            if (location == getVerticalLine(row, 0)){
+                result[1] = completeBoxRight(location);
+                result[0] = -1;
+                return result;
+            } else if (location == getVerticalLine(row,DIM-1)) {
+                result[0] = completeBoxLeft(location);
+                result[1] = -1;
+                return result;
+            }
+        }
+        result[0] = completeBoxLeft(location);
+        result[1] = completeBoxRight(location);
+        return result;
+    }
+
+    /**
+     * return the index of the box above a horizontal line at location,
+     * which is completed by this line, or -1 if this line does not complete a box.
+     *
+     * @param location of the horizontal line
+     * @return the index of the box the line, at location, completes,
+     * or -1 if it does not complete a box.
+     */
+    /*@
+        requires isHorizontalLine(location);
+        ensures getLine(location+(DIM-1))==0 || getLine(location+DIM)==0
+                || getLine(location+(DIM+DIM-1))==0 ==> \result == -1;
+        pure
+    */
+    public int completeBoxAbove(int location){
+        if (getLine(location+(DIM-1))==0 || getLine(location+DIM)==0
+                || getLine(location+(DIM+DIM-1))==0){
+            return -1;
+        }
+        return getRowColHorizontal(location)[1] + (getRowColHorizontal(location)[0]*(DIM-1));
+    }
+
+    /**
+     * return the index of the box under a horizontal line at location,
+     * which is completed by this line, or -1 if this line does not complete a box.
+     *
+     * @param location of the horizontal line
+     * @return the index of the box the line, at location, completes,
+     * or -1 if it does not complete a box.
+     */
+    /*@
+        requires isHorizontalLine(location);
+        ensures getLine(location-(DIM-1))==0 || getLine(location-DIM)==0
+                || getLine(location-(DIM+DIM-1))==0 ==> \result == -1;
+        pure
+    */
+    public int completeBoxUnder(int location){
+        if (getLine(location-(DIM-1))==0 || getLine(location-DIM)==0
+                || getLine(location-(DIM+DIM-1))==0){
+            return -1;
+        }
+        return getRowColHorizontal(location)[1] + ((getRowColHorizontal(location)[0]-1)*(DIM-1));
+
+    }
+
+    /**
+     * return the index of the box to the right of a vertical line at location,
+     * which is completed by this line, or -1 if this line does not complete a box.
+     *
+     * @param location of the vertical line
+     * @return the index of the box the line, at location, completes,
+     * or -1 if it does not complete a box.
+     */
+    /*@
+        requires isVerticalLine(location);
+        ensures getLine(location+1)==0 || getLine(location+DIM)==0
+                || getLine(location-(DIM-1))==0 ==> \result == -1;
+        pure
+    */
+    public int completeBoxRight(int location){
+        if (getLine(location+1)==0 || getLine(location+DIM)==0
+                || getLine(location-(DIM-1))==0){
+            return -1;
+        }
+        return getRowColVertical(location)[1] + (getRowColVertical(location)[0]*(DIM-1));
+    }
+
+    /**
+     * return the index of the box to the left of a vertical line at location,
+     * which is completed by this line, or -1 if this line does not complete a box.
+     *
+     * @param location of the vertical line
+     * @return the index of the box the line, at location, completes,
+     * or -1 if it does not complete a box.
+     */
+    /*@
+        requires isVerticalLine(location);
+        ensures getLine(location-1)==0 || getLine(location-DIM)==0
+                || getLine(location+(DIM-1))==0 ==> \result == -1;
+        pure
+    */
+    public int completeBoxLeft(int location){
+        if (getLine(location-1)==0 || getLine(location-DIM)==0
+                || getLine(location+(DIM-1))==0){
+            return -1;
+        }
+        return (getRowColVertical(location)[1]-1) + (getRowColVertical(location)[0] * (DIM-1));
+    }
+
+    /**
      * Returns a String representation of this board. In addition to the current
      * situation, the String also shows the numbering of the fields.
      *
@@ -265,9 +493,9 @@ public class Board {
                     //TODO: give different players different marks of lines
                     if (!(getHorizontalLine(i / 2, j) == 0)) {
                         //row += " " + getHorizontalLine(i / 2, j) + " ";
-                        row += " " + "__" + " ";
+                        row += " " + "___" + " ";
                     } else {
-                        row += " " + "  " + " ";
+                        row += " " + "   " + " ";
                     }
                 }
                 row += ".";
@@ -281,13 +509,14 @@ public class Board {
                         row += "  " + " ";
                     }
                     if (!(getBox(i / 2, j) == 0)) {
-                        row += getBox(i / 2, j) + " ";
+                        row += getBox(i / 2, j) + "  ";
                     } else {
-                        row += " " + " ";
+                        row += " " + "  ";
                     }
                 }
                 if (!(getVerticalLine(i / 2, DIM - 1) == 0)) {
-                    row += getVerticalLine(i / 2, DIM - 1);
+                    //row += getVerticalLine(i / 2, DIM - 1);
+                    row += "|";
                 } else {
                     row += " ";
                 }
@@ -297,14 +526,15 @@ public class Board {
         return s;
     }
 
-    public static void main(String[] args) {
-        Board board = new Board();
-        board.setLine(5, 1);
-        board.setLine(40, 2);
-        board.setLine(12,1);
-        board.setLine(0,1);
-        board.setLine(6,1);
-        board.setLine(11,1);
-        System.out.println(board.toString());
-    }
+//    public static void main(String[] args) {
+//        Board board = new Board();
+//        board.setLine(5, 1);
+//        board.setLine(40, 2);
+//        board.setLine(12,1);
+//        board.setLine(0,1);
+//        board.setLine(6,1);
+//        board.setLine(11,1);
+//        board.setBox(0,1);
+//        System.out.println(board.toString());
+//    }
 }
