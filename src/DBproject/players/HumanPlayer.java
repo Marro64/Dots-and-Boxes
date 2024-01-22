@@ -1,19 +1,27 @@
 package DBproject.players;
 
+import DBproject.client.ClientMoveInput;
 import DBproject.game.Game;
 
 /**
  * human player of a Dots and Boxes game.
  */
-public class HumanPlayer extends Player{
+public class HumanPlayer extends Player {
+    ClientMoveInput input;
+    public HumanPlayer(ClientMoveInput input) {
+        this.input = input;
+    }
+
     /**
      * Determines the next move, if the game still has available moves.
+     * Returns -1 if the request has been forwarded.
      *
      * @param game the current game
-     * @return the player's choice
+     * @return the player's choice, or -1 if the request has been forwarded
      */
     @Override
     public int determineMove(Game game) {
-        return 0;
+        input.requestMove();
+        return -1;
     }
 }
