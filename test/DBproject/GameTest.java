@@ -108,6 +108,17 @@ public class GameTest {
 
     @Test
     public void testDoMove(){
-
+        game.doMove(0);
+        assertEquals(1, game.getBoard().getLine(0));
+        game.doMove(5);
+        assertEquals(2, game.getBoard().getLine(5));
+        game.doMove(6);
+        game.doMove(11);
+        assertEquals(2, game.getBoard().getBox(0));
+        //when winning a box, the currentPlayer does not change
+        assertEquals(game.getPlayer2(), game.getTurn());
+        game.doMove(0);
+        //performing an invalid move does not change the currentPlayer
+        assertEquals(game.getPlayer2(), game.getTurn());
     }
 }

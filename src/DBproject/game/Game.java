@@ -221,7 +221,10 @@ public class Game {
      * @return the game situation as a String
      */
     public String toString() {
-        return board.toString() + "\n" + "Player " + player1 + " score = " + player1Score + "\n" + "Player " + player2 + "score = " + player2Score + "\n" + currentPlayer;
+        return board.toString() + "\n" + "Player, playing with number 1 "
+                + player1 + " score = " + player1Score + "\n" +
+                "Player, playing with number 2, " + player2 + "score = " +
+                player2Score + "\n" + currentPlayer;
     }
 
     //    public static void main(String[] args) {
