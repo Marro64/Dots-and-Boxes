@@ -177,7 +177,10 @@ public class Game {
      *
      * @param location the move to play
      */
-    //@ requires isValidMove(location);
+    /*@
+        requires isValidMove(location);
+        ensures isValidMove(location) ==> !board.isEmptyField(location);
+    */
     public void doMove(int location) {
         if (isValidMove(location)) {
             int first = board.completeBox(location)[0];
