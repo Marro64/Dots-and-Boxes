@@ -174,7 +174,7 @@ public class Board {
     */
     public boolean isHorizontalLine(int location) {
         if (!isLine(location)) {
-            return false;
+            throw new IllegalArgumentException("location is not valid index for a line");
         }
         for (int row = 0; row < DIM; row++) {
             for (int col = 0; col < DIM - 1; col++) {
@@ -197,7 +197,7 @@ public class Board {
     */
     public boolean isVerticalLine(int location) {
         if (!isLine(location)) {
-            return false;
+            throw new IllegalArgumentException("location is not valid index for a line");
         }
         for (int row = 0; row < DIM - 1; row++) {
             for (int col = 0; col < DIM; col++) {
