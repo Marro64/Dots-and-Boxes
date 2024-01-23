@@ -11,6 +11,26 @@ public class AIPlayer extends Player{
     public AIPlayer(Strategy strategy){
         this.strategy = strategy;
     }
+
+    /**
+     * returns the strategy of the AIPlayer.
+     *
+     * @return the strategy of the AIPlayer
+     */
+    /*@
+        pure
+    */
+    public Strategy getStrategy(){return this.strategy;}
+
+    /**
+     * set the strategy of this AIPlayer to 'strategy'.
+     *
+     * @param strategy to set the player's strategy to
+     */
+    /*@
+        ensures getStrategy() == strategy;
+    */
+    public void setStrategy(Strategy strategy){this.strategy = strategy;}
     /**
      * Determines the next move, if the game still has available moves.
      *
@@ -19,6 +39,6 @@ public class AIPlayer extends Player{
      */
     @Override
     public int determineMove(Game game) {
-        return 0;
+        return strategy.determineMove(game);
     }
 }
