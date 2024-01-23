@@ -113,12 +113,92 @@ public class GameTest {
         game.doMove(5);
         assertEquals(2, game.getBoard().getLine(5));
         game.doMove(6);
+        int score = game.getPlayerScore(game.getTurn());
         game.doMove(11);
         assertEquals(2, game.getBoard().getBox(0));
         //when winning a box, the currentPlayer does not change
         assertEquals(game.getPlayer2(), game.getTurn());
+        //check that score is updated
+        assertTrue(game.getPlayerScore(game.getTurn())==score+1);
         game.doMove(0);
         //performing an invalid move does not change the currentPlayer
         assertEquals(game.getPlayer2(), game.getTurn());
+
+        game.doMove(3);
+        game.doMove(4);
+        game.doMove(8);
+        game.doMove(14);
+        game.doMove(15);
+        game.doMove(10);
+
+        String player = game.getTurn();
+        score = game.getPlayerScore(player);
+        //1 line completes two boxes at once
+        game.doMove(9);
+        //check if two boxes are marked
+        int mark = 2;
+        if(player.equals(game.getPlayer1())){
+            mark = 1;
+        }
+        assertEquals(mark, game.getBoard().getBox(3));
+        assertEquals(mark, game.getBoard().getBox(4));
+        //check that score is updated by 2
+        assertTrue(game.getPlayerScore(game.getTurn())==score+2);
+        //check turn did not change
+        assertEquals(player, game.getTurn());
+    }
+
+    @Test
+    public void testRandomMovesGame(){
+        String firstPlayer = game.getTurn();
+        int[] movesArray = game.getValidMoves();
+        int random = (int) (Math.random() * movesArray.length);
+        //do random move
+        game.doMove(movesArray[random]);
+
+        //check if line is correctly set on game board
+        assertEquals(1, game.getBoard().getLine(movesArray[random]));
+        assertFalse(firstPlayer.equals(game.getTurn()));
+
+        int i = 1;
+        while(i < (Board.DIM - 1) * Board.DIM + (Board.DIM - 1) * Board.DIM){
+            random = (int) (Math.random() * movesArray.length);
+            String player = game.getTurn();
+            int score = game.getPlayerScore(player);
+            int mark = 1;
+            if(player.equals(game.getPlayer2())){
+                mark = 2;
+            }
+            if(game.getBoard().getLine(movesArray[random])==0){
+                game.doMove(movesArray[random]);
+                if(game.getBoard().completeBox(movesArray[random])[0]!=-1 &&
+                        game.getBoard().completeBox(movesArray[random])[1]!=-1){
+                    //check if two boxes are earned and player still got the turn
+                    assertEquals(score+2, game.getPlayerScore(player));
+                    assertEquals(player, game.getTurn());
+                    assertEquals(mark, game.getBoard().getBox(game.getBoard().completeBox(movesArray[random])[0]));
+                    assertEquals(mark, game.getBoard().getBox(game.getBoard().completeBox(movesArray[random])[1]));
+                }
+                else if(game.getBoard().completeBox(movesArray[random])[0]!=-1){
+                    //check if one box is earned and player still got the turn
+                    assertEquals(score+1, game.getPlayerScore(player));
+                    assertEquals(player, game.getTurn());
+                    assertEquals(mark, game.getBoard().getBox(game.getBoard().completeBox(movesArray[random])[0]));
+                }
+                else if(game.getBoard().completeBox(movesArray[random])[1]!=-1){
+                    //check if one box is earned and player still got the turn
+                    assertEquals(score+1, game.getPlayerScore(player));
+                    assertEquals(player, game.getTurn());
+                    assertEquals(mark, game.getBoard().getBox(game.getBoard().completeBox(movesArray[random])[1]));
+                } else {
+                    assertNotEquals(player, game.getTurn());
+                }
+                i++;
+            } else{
+                //test if invalid move played, the turn does not change
+                assertEquals(player, game.getTurn());
+            }
+        }
+        assertTrue(game.gameOver());
     }
 }

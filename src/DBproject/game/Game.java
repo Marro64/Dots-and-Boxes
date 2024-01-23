@@ -236,7 +236,7 @@ public class Game {
                     player1Score += 1;
                 }
                 if (second != -1) {
-                    board.setBox(second, 2);
+                    board.setBox(second, 1);
                     player1Score += 1;
                 }
             } else {
