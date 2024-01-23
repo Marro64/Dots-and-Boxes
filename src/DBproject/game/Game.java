@@ -13,8 +13,8 @@ public class Game {
     private int player2Score;
     private String currentPlayer;
     private Board board;
-    private Map<String, Integer> playerMark;
-    private Map<String, Integer> playerScore;
+//    private Map<String, Integer> playerMark;
+//    private Map<String, Integer> playerScore;
 
     //@ public instance invariant !gameOver() ==> getValidMoves().length > 0;
     //@ public instance invariant !gameOver() ==> getWinner() == null;
@@ -28,12 +28,12 @@ public class Game {
         this.currentPlayer = player1;
         player1Score = 0;
         player2Score = 0;
-        playerMark = new HashMap<>();
-        playerMark.put(player1, 1);
-        playerMark.put(player2, 2);
-        playerScore = new HashMap<>();
-        playerScore.put(player1, player1Score);
-        playerScore.put(player2, player2Score);
+//        playerMark = new HashMap<>();
+//        playerMark.put(player1, 1);
+//        playerMark.put(player2, 2);
+//        playerScore = new HashMap<>();
+//        playerScore.put(player1, player1Score);
+//        playerScore.put(player2, player2Score);
     }
 
     public Game(String player1, String player2, int player1Score, int player2Score, String currentPlayer, Board board) {
@@ -165,7 +165,7 @@ public class Game {
     public int[] getValidMoves() {
         Set<Integer> moves = new HashSet<>();
         if (board.isFull()) {
-            return null;
+            return new int[0];
         }
         for (int i = 0; board.isLine(i); i++) {
             if (isValidMove(i)) {
