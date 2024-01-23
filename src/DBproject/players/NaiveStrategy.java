@@ -16,6 +16,9 @@ public class NaiveStrategy implements Strategy{
     @Override
     public int determineMove(Game game) {
         int[] movesArray = game.getValidMoves();
+        if(movesArray.length == 0){
+            return -1;
+        }
         int random = (int) (Math.random() * movesArray.length);
         return movesArray[random];
     }
