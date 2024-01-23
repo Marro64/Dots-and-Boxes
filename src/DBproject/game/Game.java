@@ -1,9 +1,7 @@
 package DBproject.game;
 
 import DBproject.players.Player;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * represents a Dots and Boxes game.
@@ -15,6 +13,8 @@ public class Game {
     private int player2Score;
     private String currentPlayer;
     private Board board;
+    private Map<String, Integer> playerMark;
+    private Map<String, Integer> playerScore;
 
     //@ public instance invariant !gameOver() ==> getValidMoves().length > 0;
     //@ public instance invariant !gameOver() ==> getWinner() == null;
@@ -28,6 +28,12 @@ public class Game {
         this.currentPlayer = player1;
         player1Score = 0;
         player2Score = 0;
+        playerMark = new HashMap<>();
+        playerMark.put(player1, 1);
+        playerMark.put(player2, 2);
+        playerScore = new HashMap<>();
+        playerScore.put(player1, player1Score);
+        playerScore.put(player2, player2Score);
     }
 
     public Game(String player1, String player2, int player1Score, int player2Score, String currentPlayer, Board board) {
@@ -81,6 +87,20 @@ public class Game {
      * @return the board of the game
      */
     public Board getBoard(){ return this.board; }
+
+    /**
+     * return the score of player with playerName, or -1 if playerName is not a player of this game.
+     *
+     * @return the score of playerName, or -1 if playerName is not a player of this game.
+     */
+    public int getPlayerScore(String playerName){
+        if(playerName.equals(player1)){
+            return this.player1Score;
+        } else if (playerName.equals(player2)) {
+            return this.player2Score;
+        }
+        return -1;
+    }
 
     /**
      * Check if the game is over, i.e., there are no more moves available.
@@ -185,33 +205,54 @@ public class Game {
         if (isValidMove(location)) {
             int first = board.completeBox(location)[0];
             int second = board.completeBox(location)[1];
+//            board.setLine(location, playerMark.get(currentPlayer));
+//            if(first == -1 && second == -1){
+//                if (currentPlayer.equals(player1)){
+//                    currentPlayer = player2;
+//                } else {
+//                    currentPlayer = player1;
+//                }
+//                return;
+//            }
+//            if (first != -1) {
+//                board.setBox(first, playerMark.get(currentPlayer));
+//                int score = playerScore.get(currentPlayer);
+//                playerScore.put(currentPlayer, score += 1);
+//            }
+//            if (second != -1) {
+//                board.setBox(second, playerMark.get(currentPlayer));
+//                int score = playerScore.get(currentPlayer);
+//                playerScore.put(currentPlayer, score += 1);
+//            }
             if (currentPlayer.equals(player1)) {
                 //TODO make class move to combine location and player number?
                 board.setLine(location, 1);
+                if(first == -1 && second == -1){
+                    currentPlayer = player2;
+                    return;
+                }
                 if (first != -1) {
                     board.setBox(first, 1);
                     player1Score += 1;
-                    return;
                 }
                 if (second != -1) {
-                    board.setBox(second, 1);
+                    board.setBox(second, 2);
                     player1Score += 1;
-                    return;
                 }
-                currentPlayer = player2;
             } else {
                 board.setLine(location, 2);
+                if(first == -1 && second == -1){
+                    currentPlayer = player1;
+                    return;
+                }
                 if (first != -1) {
                     board.setBox(first, 2);
                     player2Score += 1;
-                    return;
                 }
                 if (second != -1) {
                     board.setBox(second, 2);
                     player2Score += 1;
-                    return;
                 }
-                currentPlayer = player1;
             }
         }
 
@@ -224,7 +265,7 @@ public class Game {
      * @return the game situation as a String
      */
     public String toString() {
-        return board.toString() + "\n" + "Player, playing with number 1 "
+        return board.toString() + "\n" + "Player, playing with number 1, "
                 + player1 + " score = " + player1Score + "\n" +
                 "Player, playing with number 2, " + player2 + "score = " +
                 player2Score + "\n" + currentPlayer;
