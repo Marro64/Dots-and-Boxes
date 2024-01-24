@@ -44,12 +44,12 @@ public class SmartStrategy implements Strategy {
             return movesArray[random];
         }
 
-        int random = (int) (Math.random() * allowedMoves.size());
         int[] result = new int[allowedMoves.size()];
         int i = 0;
         for (int move : allowedMoves) {
             result[i++] = move;
         }
+        int random = (int) (Math.random() * result.length);
         return result[random];
     }
 
