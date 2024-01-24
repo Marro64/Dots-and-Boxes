@@ -9,8 +9,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Client {
-    private ClientConnection clientConnection;
-    private Set<ClientListener> clientListeners;
+    private final ClientConnection clientConnection;
+    private final Set<ClientListener> clientListeners;
     private Game game;
     private Player player;
     private String username;
@@ -57,7 +57,12 @@ public class Client {
     }
 
     public void sendMove(int location) {
-        clientConnection.sendMove(location);
+        if (game.isValidMove(location)) {
+            clientConnection.sendMove(location);
+        } else {
+            System.out.println("Client.sendMove: Invalid move " + location);
+            askForMove();
+        }
     }
 
     public void receiveHello(String serverDescription) {
@@ -90,6 +95,9 @@ public class Client {
         for (ClientListener clientListener : clientListeners) {
             clientListener.newGame();
         }
+        if (game.getTurn().equals(getUsername())) {
+            askForMove();
+        }
     }
 
     public void receiveMove(int location) {
@@ -98,12 +106,16 @@ public class Client {
         for (ClientListener clientListener : clientListeners) {
             clientListener.receiveMove(location);
         }
-        if(game.getTurn().equals(username)) {
-            System.out.println("client.receiveMove: player goes next");
-            int responseMove = player.determineMove(game);
-            if (responseMove >= 0) {
-                sendMove(responseMove);
-            }
+        if (game.getTurn().equals(username)) {
+            askForMove();
+        }
+    }
+
+    private void askForMove() {
+        System.out.println("client.askForMove");
+        int responseMove = player.determineMove(game);
+        if (responseMove >= 0) {
+            sendMove(responseMove);
         }
     }
 
@@ -111,7 +123,6 @@ public class Client {
         for (ClientListener clientListener : clientListeners) {
             clientListener.gameOver(reason, winner);
         }
-        game = null;
     }
 
     public void receiveError() {
