@@ -69,11 +69,23 @@ public class ClientConnection extends SocketConnection {
                 case Protocol.ERROR:
                     client.receiveError();
                     break;
+                case Protocol.GAMEOVER:
+                    if (messageParts.length < 2) {
+                        throw new IllegalArgumentException();
+                    } else if (messageParts.length < 3) {
+                        String reason = messageParts[1];
+                        client.receiveGameOver(reason, "");
+                        break;
+                    }
+                    String reason = messageParts[1];
+                    String winner = messageParts[2];
+                    client.receiveGameOver(reason, winner);
+                    break;
                 default:
                     throw new IllegalArgumentException();
             }
         } catch (IllegalArgumentException ignore) {
-            System.out.println("ClientConnection.receiveMessage: IllegalArgumentException");
+            System.out.println("ClientConnection.receiveMessage caught IllegalArgumentException");
         }
     }
 
