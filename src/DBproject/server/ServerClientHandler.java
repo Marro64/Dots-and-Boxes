@@ -21,6 +21,7 @@ public class ServerClientHandler {
      */
     public void handleDisconnect() {
         server.removeClient(this);
+        serverGameManager.handleDisconnect();
     }
 
     /**

@@ -47,10 +47,13 @@ public class Server extends SocketServer{
     public synchronized void handleQueueEntry(ServerClientHandler serverClientHandler){
         queue.add(serverClientHandler);
         if (queue.size()>=2){
+            ServerClientHandler player1 = queue.get(0);
+            ServerClientHandler player2 = queue.get(1);
             ServerGameManager gameManager =
-                    new ServerGameManager(queue.get(0), queue.get(1));
-            queue.get(0).newGame(gameManager);
-            queue.get(1).newGame(gameManager);
+                    new ServerGameManager(player1, player2);
+            queue.remove(player1);
+            queue.remove(player2);
+            //TODO can you enter the queue multiple times?
         }
     }
 
