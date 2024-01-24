@@ -2,6 +2,8 @@ package DBproject.client;
 
 import DBproject.networking.Protocol;
 import DBproject.players.*;
+import DBproject.exceptions.*;
+import static DBproject.networking.Protocol.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +14,8 @@ import java.net.UnknownHostException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.concurrent.SynchronousQueue;
+
+import static DBproject.networking.Protocol.*;
 
 public class ClientTUI implements ClientListener, ClientMoveInput {
     private final InputStream in;
@@ -57,7 +61,7 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
     @Override
     public void connectionLost() {
         out.println("Connection lost.");
-        offerIncomingState(UIState.AskForHost);
+        offerIncomingState(UIState.Exit);
     }
 
     @Override
@@ -107,21 +111,20 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
     public void gameOver(String reason, String winner) {
         System.out.println(client.getGame().toString());
         switch (reason) {
-            case Protocol.DISCONNECT:
-                System.out.println("Opponent Disconnected.");
+            case DISCONNECT:
+                offerIncomingState(UIState.GameOverDisconnected);
                 break;
-            case Protocol.DRAW:
-                System.out.println("Draw!");
+            case DRAW:
+                offerIncomingState(UIState.GameOverDraw);
                 break;
-            case Protocol.VICTORY:
+            case VICTORY:
                 if (winner.equals(client.getUsername())) {
-                    System.out.println("Victory!");
+                    offerIncomingState(UIState.GameOverVictory);
                 } else {
-                    System.out.println("Defeat!");
+                    offerIncomingState(UIState.GameOverDefeat);
                 }
                 break;
         }
-        state = UIState.GameOver;
     }
 
     private synchronized UIState getNextState() {
@@ -134,7 +137,7 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
     }
 
     public void runTUI() {
-        while (true) {
+        while (state != UIState.Exit) {
             switch (getNextState()) {
                 case AskForHost -> askForHost();
                 case AskForPort -> askForPort();
@@ -150,10 +153,12 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
                 case AskForMove -> askForMove();
                 case ReceivedError -> receivedError();
                 case ReceivedMove -> receivedMove();
-                case GameOver -> gameOver();
+                case GameOverDisconnected, GameOverVictory, GameOverDraw, GameOverDefeat -> gameOver();
                 case Idle, InGameIdle, WaitForHello, WaitForUsernameReply, WaitForNewGame -> waitForStateUpdate();
             }
         }
+        client.removeListener(this);
+        client.close();
     }
 
     private synchronized void waitForStateUpdate() {
@@ -204,6 +209,7 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
         } catch (IOException e) {
             out.println("Failed to connect.");
             setNextState(UIState.AskForHost);
+            return;
         }
         client.sendHello("A client");
         setNextState(UIState.WaitForHello);
@@ -281,13 +287,6 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
         String player1 = client.getGame().getPlayer1();
         String player2 = client.getGame().getPlayer2();
         out.println(player1 + " vs " + player2);
-        if (player1.equals(client.getUsername())) {
-            out.println("You're player 1, so you'll go first");
-            setNextState(UIState.AskForMove);
-        } else if (player2.equals(client.getUsername())) {
-            out.println("You're player 2, so you'll go second.");
-            setNextState(UIState.InGameIdle);
-        }
     }
 
     private void askForMove() {
@@ -296,13 +295,13 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
             out.print("Line? ");
             int location = scanner.nextInt();
 
-            if (location < 0 || location > 59) {
-                throw new InputMismatchException();
+            if (location < 0 || location > 59 || !client.getGame().isValidMove(location)) {
+                throw new IllegalMoveException();
             }
 
             client.sendMove(location);
             setNextState(UIState.InGameIdle);
-        } catch (InputMismatchException ignore) {
+        } catch (InputMismatchException | IllegalMoveException ignore) {
             out.println("Invalid location.");
             setNextState(UIState.AskForMove);
         }
@@ -318,7 +317,21 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
     }
 
     private void gameOver() {
-        out.println("Game Over.");
+        System.out.println(client.getGame().toString());
+        switch (state) {
+            case GameOverDisconnected:
+                System.out.println("Opponent Disconnected.");
+                break;
+            case GameOverDraw:
+                System.out.println("Draw!");
+                break;
+            case GameOverVictory:
+                System.out.println("Victory!");
+                break;
+            case GameOverDefeat:
+                System.out.println("Defeat!");
+                break;
+        }
         setNextState(UIState.MainMenu);
     }
 
