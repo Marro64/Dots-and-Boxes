@@ -559,7 +559,6 @@ public class Board {
                 for (int j = 0; j < DIM - 1; j++) {
                     //printing horizontal lines (that start with a dot)
                     row += ".";
-                    //TODO: give different players different marks of lines
                     if (!(getHorizontalLine(i / 2, j) == 0)) {
                         //row += " " + getHorizontalLine(i / 2, j) + " ";
                         row += " " + "___" + " ";
@@ -571,7 +570,6 @@ public class Board {
             } else {
                 for (int j = 0; j < DIM - 1; j++) {
                     //printing vertical lines, which also include the content of the boxes on that line
-                    //TODO: give different players different marks of lines
                     if (!(getVerticalLine(i / 2, j) == 0)) {
                         //row += getVerticalLine(i / 2, j) + " ";
                         row += "|" + "  ";
@@ -615,16 +613,4 @@ public class Board {
         }
         return true;
     }
-
-    //    public static void main(String[] args) {
-    //        Board board = new Board();
-    //        board.setLine(5, 1);
-    //        board.setLine(40, 2);
-    //        board.setLine(12,1);
-    //        board.setLine(0,1);
-    //        board.setLine(6,1);
-    //        board.setLine(11,1);
-    //        board.setBox(0,1);
-    //        System.out.println(board.toString());
-    //    }
 }

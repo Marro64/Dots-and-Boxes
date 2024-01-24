@@ -197,27 +197,7 @@ public class Game {
         if (isValidMove(location)) {
             int first = board.completeBox(location)[0];
             int second = board.completeBox(location)[1];
-//            board.setLine(location, playerMark.get(currentPlayer));
-//            if(first == -1 && second == -1){
-//                if (currentPlayer.equals(player1)){
-//                    currentPlayer = player2;
-//                } else {
-//                    currentPlayer = player1;
-//                }
-//                return;
-//            }
-//            if (first != -1) {
-//                board.setBox(first, playerMark.get(currentPlayer));
-//                int score = playerScore.get(currentPlayer);
-//                playerScore.put(currentPlayer, score += 1);
-//            }
-//            if (second != -1) {
-//                board.setBox(second, playerMark.get(currentPlayer));
-//                int score = playerScore.get(currentPlayer);
-//                playerScore.put(currentPlayer, score += 1);
-//            }
             if (currentPlayer.equals(player1)) {
-                //TODO make class move to combine location and player number?
                 board.setLine(location, 1);
                 if(first == -1 && second == -1){
                     currentPlayer = player2;
@@ -262,26 +242,4 @@ public class Game {
                 "Player, playing with number 2, " + player2 + "score = " +
                 player2Score + "\n" + currentPlayer;
     }
-
-    //    public static void main(String[] args) {
-    //        Game game = new Game("firstPlayer", "secondPlayer");
-    //        game.doMove(0);
-    //        game.doMove(10);
-    //        game.doMove(5);
-    //        game.doMove(6);
-    //        game.doMove(11);
-    //        game.doMove(17);
-    //        game.doMove(18);
-    //        game.doMove(23);
-    //        game.doMove(12);
-    //        game.doMove(4);
-    //        game.doMove(10);
-    //        game.doMove(15);
-    //        game.doMove(9);
-    //        game.doMove(26);
-    //        game.doMove(31);
-    //        game.doMove(37);
-    //        game.doMove(32);
-    //        System.out.println(game);
-    //    }
 }
