@@ -14,6 +14,9 @@ public class BoardTest {
     private Board board;
     private final int DIM = board.DIM;
 
+    /**
+     * create a new board before every test.
+     */
     @BeforeEach
     public void setUp() { board = new Board(); }
 
@@ -296,7 +299,7 @@ public class BoardTest {
         assertEquals(1, board.getBox(1, 0));
         assertEquals(0, board.getBox(0, 1));
         assertThrows(IllegalArgumentException.class, () -> board.getBox(-1, -1));
-        assertThrows(IllegalArgumentException.class, () -> board.getBox((DIM - 1), (DIM - 1)));
+        assertThrows(IllegalArgumentException.class, () -> board.getBox(DIM - 1, DIM - 1));
     }
 
     /**
