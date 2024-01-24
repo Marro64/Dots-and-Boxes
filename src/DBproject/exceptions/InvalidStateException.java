@@ -1,7 +1,10 @@
 package DBproject.exceptions;
 
 public class InvalidStateException extends Exception {
-    InvalidStateException(String message) {
+    public InvalidStateException(String message) {
         super(message);
+    }
+    public InvalidStateException() {
+        super();
     }
 }
