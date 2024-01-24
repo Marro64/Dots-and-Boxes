@@ -19,6 +19,10 @@ public enum UIState {
     ReceivedError,
     InGameIdle,
     ReceivedMove,
-    GameOver,
-    Idle
+    GameOverDisconnected,
+    GameOverVictory,
+    GameOverDraw,
+    GameOverDefeat,
+    Idle,
+    Exit
 }
