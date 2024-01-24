@@ -7,6 +7,7 @@ import java.net.Socket;
 
 public class ServerConnection extends SocketConnection {
     private ServerClientHandler serverClientHandler;
+
     /**
      * Create a new SocketConnection. This is not meant to be used directly.
      * Instead, the SocketServer and SocketClient classes should be used.
@@ -18,12 +19,13 @@ public class ServerConnection extends SocketConnection {
         super(socket);
         this.serverClientHandler = serverClientHandler;
     }
+
     /**
      * Handles a message received from the connection.
      *
      * @param message the message received from the connection
      */
-    public void handleMessage(String message){
+    public void handleMessage(String message) {
         String[] splitMessage = message.split(Protocol.SEPARATOR, 2);
         if (splitMessage.length != 2) {
             System.out.println("Received input not of valid type");
@@ -34,7 +36,8 @@ public class ServerConnection extends SocketConnection {
             case Protocol.LOGIN -> serverClientHandler.receiveLogin(splitMessage[1]);
             case Protocol.LIST -> serverClientHandler.receiveUserListRequest();
             case Protocol.QUEUE -> serverClientHandler.receiveQueueEntry();
-            case Protocol.MOVE -> serverClientHandler.receiveMove(Integer.parseInt(splitMessage[1]));
+            case Protocol.MOVE ->
+                    serverClientHandler.receiveMove(Integer.parseInt(splitMessage[1]));
         }
     }
 
@@ -47,25 +50,32 @@ public class ServerConnection extends SocketConnection {
     }
 
     /**
+     * Start receiving messages and call methods of the given handler to handle the messages.
+     * This method may only be called once.
+     */
+    @Override
+    protected void start() { super.start(); }
+
+    /**
      * sends hello with a server description to the connection.
      *
      * @param serverDescription description of the server
      */
-    public void sendHello(String serverDescription){
+    public void sendHello(String serverDescription) {
         super.sendMessage(Protocol.HELLO + Protocol.SEPARATOR + serverDescription);
     }
 
     /**
      * sends login to the connection.
      */
-    public void sendLogin(){
+    public void sendLogin() {
         super.sendMessage(Protocol.LOGIN);
     }
 
     /**
      * sends already logged in to the connection.
      */
-    public void sendAlreadyLoggedIn(){
+    public void sendAlreadyLoggedIn() {
         super.sendMessage(Protocol.ALREADYLOGGEDIN);
     }
 
@@ -74,12 +84,12 @@ public class ServerConnection extends SocketConnection {
      *
      * @param users different usernames that are currently logged into the server
      */
-    public void sendList(String[] users){
+    public void sendList(String[] users) {
         String result = "";
-        for (int i=0; i< users.length;i++){
+        for (int i = 0; i < users.length; i++) {
             result = result + Protocol.SEPARATOR + users[i];
         }
-        if(result.isEmpty()){
+        if (result.isEmpty()) {
             super.sendMessage(Protocol.LIST);
             return;
         }
@@ -93,9 +103,9 @@ public class ServerConnection extends SocketConnection {
      * @param player1 name of the first player
      * @param player2 name of the second player
      */
-    public void sendNewGame(String player1, String player2){
-        super.sendMessage(Protocol.NEWGAME + Protocol.SEPARATOR + player1 +
-                                  Protocol.SEPARATOR + player2);
+    public void sendNewGame(String player1, String player2) {
+        super.sendMessage(
+                Protocol.NEWGAME + Protocol.SEPARATOR + player1 + Protocol.SEPARATOR + player2);
     }
 
     /**
@@ -104,15 +114,16 @@ public class ServerConnection extends SocketConnection {
      *
      * @param location of the next move that is played
      */
-    public void sendMove(int location){
+    public void sendMove(int location) {
         super.sendMessage(Protocol.MOVE + location);
     }
 
     /**
      * sends message to the connection to indicate the end of the game.
+     *
      * @param reason of the end of the game
      */
-    public void sendGameOver(String reason){
+    public void sendGameOver(String reason) {
         super.sendMessage(Protocol.GAMEOVER + Protocol.SEPARATOR + reason);
     }
 
@@ -122,15 +133,15 @@ public class ServerConnection extends SocketConnection {
      * @param reason of the end of the game
      * @param winner of the game
      */
-    public void sendGameOver(String reason, String winner){
-        super.sendMessage(Protocol.GAMEOVER + Protocol.SEPARATOR + reason +
-                                  Protocol.SEPARATOR + winner);
+    public void sendGameOver(String reason, String winner) {
+        super.sendMessage(
+                Protocol.GAMEOVER + Protocol.SEPARATOR + reason + Protocol.SEPARATOR + winner);
     }
 
     /**
      * sends error to the connection, when client performed a move that he knew was illegal.
      */
-    public void sendError(){
+    public void sendError() {
         super.sendMessage(Protocol.ERROR);
     }
 }
