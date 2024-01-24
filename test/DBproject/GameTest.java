@@ -10,6 +10,9 @@ import org.junit.jupiter.api.BeforeEach;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * test game class for Dots and Boxes game.
+ */
 public class GameTest {
     private Game game;
     private String player1Name = "player1";
@@ -61,6 +64,9 @@ public class GameTest {
         assertFalse(game.gameOver());
         game.doMove((Board.DIM - 1) * Board.DIM + (Board.DIM - 1) * Board.DIM -1);
         assertTrue(game.gameOver());
+        String player = game.getTurn();
+        game.doMove(1);
+        assertEquals(player, game.getTurn());
     }
 
     @Test
@@ -68,7 +74,7 @@ public class GameTest {
         for (int i = 0; i < (Board.DIM - 1) * Board.DIM + (Board.DIM - 1) * Board.DIM -1; i++) {
             game.doMove(i);
         }
-        assertEquals(null, game.getWinner());
+        assertNull(game.getWinner());
         game.doMove((Board.DIM - 1) * Board.DIM + (Board.DIM - 1) * Board.DIM -1);
         assertEquals(game.getPlayer2(), game.getWinner());
     }
@@ -94,7 +100,7 @@ public class GameTest {
             game.doMove(i);
         }
         moves = game.getValidMoves();
-        assertNull(moves);
+        assertTrue(moves.length==0);
     }
 
     @Test
@@ -200,5 +206,14 @@ public class GameTest {
             }
         }
         assertTrue(game.gameOver());
+    }
+
+    @Test
+    public void testToString(){
+        assertTrue(game.toString().contains(player1Name));
+        assertTrue(game.toString().contains(player2Name));
+        assertTrue(game.toString().contains(game.getBoard().toString()));
+        assertTrue(game.toString().contains(Integer.toString(game.getPlayerScore(player1Name))));
+        assertTrue(game.toString().contains(Integer.toString(game.getPlayerScore(player2Name))));
     }
 }

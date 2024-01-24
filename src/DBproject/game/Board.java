@@ -78,9 +78,6 @@ public class Board {
     requires col >= 0 && col < DIM -1;
     pure
      @*/
-    // row = 1; 11
-    // row = 2; 22
-    // row = 5; 55
     public int horizontalIndex(int row, int col) {
         if (row >= 0 && row < DIM && col >= 0 && col < DIM - 1) {
             //2*DIM-1 lines in between 1 row
@@ -99,11 +96,6 @@ public class Board {
     requires col >= 0 && col < DIM;
     pure
      @*/
-    // row = 0 ; 5
-    // row = 1; 10+6
-    //row = 2; 15 + 12
-    // row = 4; 25 + 20 + 4
-    //row = 5; 30 + 25 + 5
     public int verticalIndex(int row, int col) {
         if (row >= 0 && row < DIM - 1 && col >= 0 && col < DIM) {
             return (row + 1) * (DIM - 1) + (row * (DIM - 1) + row) + col;
@@ -145,7 +137,6 @@ public class Board {
         if (isVerticalLine(location)) {
             int[] result = new int[2];
             result[1] = (location - 5) % (DIM + DIM - 1);
-            //result[0] = (location - result[1]) % (DIM -1);
             result[0] = (location - result[1]) / (DIM + DIM - 1);
             return result;
         }

@@ -7,6 +7,9 @@ import org.junit.jupiter.api.BeforeEach;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * test board class for Dots and Boxes game.
+ */
 public class BoardTest {
     private Board board;
     private final int DIM = board.DIM;
@@ -14,6 +17,9 @@ public class BoardTest {
     @BeforeEach
     public void setUp() { board = new Board(); }
 
+    /**
+     * test the construction of the board.
+     */
     @Test
     public void testSetUp() {
         //test if all lines are empty, i.e., contain 0
@@ -26,6 +32,9 @@ public class BoardTest {
         }
     }
 
+    /**
+     * test deepCopy method of board.
+     */
     @Test
     public void testDeepCopy() {
         board.setLine(0, 1);
@@ -56,6 +65,9 @@ public class BoardTest {
         assertEquals(2, deepCopyBoard.getLine(10));
     }
 
+    /**
+     * test horizontalIndex method of board.
+     */
     @Test
     public void testHorizontalIndex() {
         int index = 0;
@@ -70,12 +82,15 @@ public class BoardTest {
                 }
             }
         }
-        assertThrows(IllegalArgumentException.class, () -> board.horizontalIndex(-1,0));
-        assertThrows(IllegalArgumentException.class, () -> board.horizontalIndex(6,0));
-        assertThrows(IllegalArgumentException.class, () -> board.horizontalIndex(0,-1));
-        assertThrows(IllegalArgumentException.class, () -> board.horizontalIndex(0,5));
+        assertThrows(IllegalArgumentException.class, () -> board.horizontalIndex(-1, 0));
+        assertThrows(IllegalArgumentException.class, () -> board.horizontalIndex(6, 0));
+        assertThrows(IllegalArgumentException.class, () -> board.horizontalIndex(0, -1));
+        assertThrows(IllegalArgumentException.class, () -> board.horizontalIndex(0, 5));
     }
 
+    /**
+     * test verticalIndex method of board.
+     */
     @Test
     public void testVerticalIndex() {
         int index = DIM - 1; //vertical indices start at (DIM-1)
@@ -90,12 +105,15 @@ public class BoardTest {
                 }
             }
         }
-        assertThrows(IllegalArgumentException.class, () -> board.verticalIndex(0,6));
+        assertThrows(IllegalArgumentException.class, () -> board.verticalIndex(0, 6));
         assertThrows(IllegalArgumentException.class, () -> board.verticalIndex(0, -1));
-        assertThrows(IllegalArgumentException.class, () -> board.verticalIndex(5,0));
-        assertThrows(IllegalArgumentException.class, () -> board.verticalIndex(-1,0));
+        assertThrows(IllegalArgumentException.class, () -> board.verticalIndex(5, 0));
+        assertThrows(IllegalArgumentException.class, () -> board.verticalIndex(-1, 0));
     }
 
+    /**
+     * test getRowColHorizontal method of board.
+     */
     @Test
     public void testGetRowColHorizontal() {
         for (int i = 0; i < DIM; i++) {
@@ -108,6 +126,9 @@ public class BoardTest {
         assertThrows(IllegalArgumentException.class, () -> board.getRowColHorizontal(DIM));
     }
 
+    /**
+     * test getRowColVertical method of board.
+     */
     @Test
     public void testGetRowColVertical() {
         for (int i = 0; i < DIM - 1; i++) {
@@ -120,6 +141,9 @@ public class BoardTest {
         assertThrows(IllegalArgumentException.class, () -> board.getRowColVertical(0));
     }
 
+    /**
+     * test isLine method of board.
+     */
     @Test
     public void testIsLine() {
         assertFalse(board.isLine(-1));
@@ -129,6 +153,9 @@ public class BoardTest {
         assertFalse(board.isLine((DIM - 1) * DIM + (DIM - 1) * DIM));
     }
 
+    /**
+     * test isHorizontalLine method of board.
+     */
     @Test
     public void testIsHorizontalLine() {
         for (int row = 0; row < DIM; row++) {
@@ -138,9 +165,13 @@ public class BoardTest {
             }
         }
         assertThrows(IllegalArgumentException.class, () -> board.isHorizontalLine(-1));
-        assertThrows(IllegalArgumentException.class, () -> board.isHorizontalLine((DIM-1)*DIM + (DIM-1)*DIM));
+        assertThrows(IllegalArgumentException.class,
+                     () -> board.isHorizontalLine((DIM - 1) * DIM + (DIM - 1) * DIM));
     }
 
+    /**
+     * test isVerticalLine method of board.
+     */
     @Test
     public void testIsVerticalLine() {
         for (int row = 0; row < DIM - 1; row++) {
@@ -150,9 +181,13 @@ public class BoardTest {
             }
         }
         assertThrows(IllegalArgumentException.class, () -> board.isVerticalLine(-1));
-        assertThrows(IllegalArgumentException.class, () -> board.isVerticalLine((DIM-1)*DIM + (DIM-1)*DIM));
+        assertThrows(IllegalArgumentException.class,
+                     () -> board.isVerticalLine((DIM - 1) * DIM + (DIM - 1) * DIM));
     }
 
+    /**
+     * test isBox method of board that takes one parameter as input.
+     */
     @Test
     public void testIsBoxIndex() {
         assertFalse(board.isBox(-1));
@@ -162,6 +197,9 @@ public class BoardTest {
         assertFalse(board.isBox((DIM - 1) * (DIM - 1)));
     }
 
+    /**
+     * test isBox method of board that takes two parameters as input.
+     */
     @Test
     public void testIsBoxRowCol() {
         assertFalse(board.isBox(-1, 0));
@@ -176,6 +214,9 @@ public class BoardTest {
         assertFalse(board.isBox(DIM - 1, DIM - 1));
     }
 
+    /**
+     * test setLine and getLine methods of board.
+     */
     @Test
     public void testSetAndGetLine() {
         board.setLine(0, 1);
@@ -184,11 +225,16 @@ public class BoardTest {
         assertEquals(2, board.getLine(3));
         assertEquals(0, board.getLine(1));
         assertThrows(IllegalArgumentException.class, () -> board.getLine(-1));
-        assertThrows(IllegalArgumentException.class, () -> board.getLine((DIM-1)*DIM+(DIM-1)*DIM));
-        assertThrows(IllegalArgumentException.class, () -> board.setLine(-1,1));
-        assertThrows(IllegalArgumentException.class, () -> board.setLine((DIM-1)*DIM+(DIM-1)*DIM,1));
+        assertThrows(IllegalArgumentException.class,
+                     () -> board.getLine((DIM - 1) * DIM + (DIM - 1) * DIM));
+        assertThrows(IllegalArgumentException.class, () -> board.setLine(-1, 1));
+        assertThrows(IllegalArgumentException.class,
+                     () -> board.setLine((DIM - 1) * DIM + (DIM - 1) * DIM, 1));
     }
 
+    /**
+     * test getHorizontalLine method of board.
+     */
     @Test
     public void testGetHorizontalLine() {
         board.setLine(1, 1);
@@ -196,21 +242,26 @@ public class BoardTest {
         assertEquals(1, board.getHorizontalLine(location[0], location[1]));
         location = board.getRowColHorizontal(0);
         assertEquals(0, board.getHorizontalLine(location[0], location[1]));
-//        assertThrows(IllegalArgumentException.class, () -> board.getHorizontalLine(0,DIM-1));
-//        assertThrows(IllegalArgumentException.class, () -> board.getHorizontalLine(DIM,0));
-        //TODO
+        assertThrows(IllegalArgumentException.class, () -> board.getHorizontalLine(0, DIM - 1));
+        assertThrows(IllegalArgumentException.class, () -> board.getHorizontalLine(DIM, 0));
     }
 
+    /**
+     * test getVerticalLine method of board.
+     */
     @Test
     public void testGetVerticalLine() {
         board.setLine(16, 1);
         int[] location = board.getRowColVertical(16);
         assertEquals(1, board.getVerticalLine(location[0], location[1]));
         assertEquals(0, board.getHorizontalLine(location[0], location[1]));
-        assertThrows(IllegalArgumentException.class, () -> board.getVerticalLine(0,DIM));
-        assertThrows(IllegalArgumentException.class, () -> board.getVerticalLine(DIM-1,0));
+        assertThrows(IllegalArgumentException.class, () -> board.getVerticalLine(0, DIM));
+        assertThrows(IllegalArgumentException.class, () -> board.getVerticalLine(DIM - 1, 0));
     }
 
+    /**
+     * test isEmptyField method of board.
+     */
     @Test
     public void testIsEmptyField() {
         board.setLine(20, 1);
@@ -219,6 +270,9 @@ public class BoardTest {
         assertThrows(IllegalArgumentException.class, () -> board.isEmptyField(-1));
     }
 
+    /**
+     * test setBox and getBox, that take one parameter, methods of board.
+     */
     @Test
     public void testSetAndGetBoxIndex() {
         board.setBox(0, 1);
@@ -226,22 +280,28 @@ public class BoardTest {
         assertEquals(0, board.getBox(1));
         assertEquals(0, board.getBox(10));
         assertThrows(IllegalArgumentException.class, () -> board.getBox(-1));
-        assertThrows(IllegalArgumentException.class, () -> board.getBox((DIM-1)*(DIM-1)));
-        assertThrows(IllegalArgumentException.class, () -> board.setBox(-1,1));
-        assertThrows(IllegalArgumentException.class, () -> board.setBox((DIM-1)*(DIM-1),1));
+        assertThrows(IllegalArgumentException.class, () -> board.getBox((DIM - 1) * (DIM - 1)));
+        assertThrows(IllegalArgumentException.class, () -> board.setBox(-1, 1));
+        assertThrows(IllegalArgumentException.class, () -> board.setBox((DIM - 1) * (DIM - 1), 1));
     }
 
+    /**
+     * test setBox and getBox, that take two parameters, methods of board.
+     */
     @Test
-    public void testGetBoxRowCol() {
+    public void testSetAndGetBoxRowCol() {
         board.setBox(0, 1);
         board.setBox(DIM - 1, 1);
         assertEquals(1, board.getBox(0, 0));
         assertEquals(1, board.getBox(1, 0));
         assertEquals(0, board.getBox(0, 1));
-        assertThrows(IllegalArgumentException.class, () -> board.getBox(-1,-1));
-        assertThrows(IllegalArgumentException.class, () -> board.getBox((DIM-1),(DIM-1)));
+        assertThrows(IllegalArgumentException.class, () -> board.getBox(-1, -1));
+        assertThrows(IllegalArgumentException.class, () -> board.getBox((DIM - 1), (DIM - 1)));
     }
 
+    /**
+     * test isFull method of board.
+     */
     @Test
     public void testIsFull() {
         for (int i = 0; i < (DIM - 1) * DIM + (DIM - 1) * DIM - 1; i++) {
@@ -253,6 +313,9 @@ public class BoardTest {
         assertTrue(board.isFull());
     }
 
+    /**
+     * test completeBoxAbove method of board.
+     */
     @Test
     public void testCompleteBoxAbove() {
         assertEquals(-1, board.completeBoxAbove(0));
@@ -268,6 +331,9 @@ public class BoardTest {
         assertThrows(IllegalArgumentException.class, () -> board.completeBoxAbove(55));
     }
 
+    /**
+     * test completeBoxUnder method of board.
+     */
     @Test
     public void testCompleteBoxUnder() {
         assertEquals(-1, board.completeBoxUnder(22));
@@ -283,6 +349,9 @@ public class BoardTest {
         assertThrows(IllegalArgumentException.class, () -> board.completeBoxUnder(0));
     }
 
+    /**
+     * test completeBoxRight method of board.
+     */
     @Test
     public void testCompleteBoxRight() {
         assertEquals(-1, board.completeBoxRight(18));
@@ -298,6 +367,9 @@ public class BoardTest {
         assertThrows(IllegalArgumentException.class, () -> board.completeBoxRight(10));
     }
 
+    /**
+     * testCompleteBoxLeft method of board.
+     */
     @Test
     public void testCompleteBoxLeft() {
         assertEquals(-1, board.completeBoxLeft(19));
@@ -313,6 +385,9 @@ public class BoardTest {
         assertThrows(IllegalArgumentException.class, () -> board.completeBoxLeft(5));
     }
 
+    /**
+     * test complete box method of board.
+     */
     @Test
     public void testCompleteBox() {
         assertThrows(IllegalArgumentException.class, () -> board.completeBox(-1));
@@ -355,6 +430,9 @@ public class BoardTest {
         assertEquals(-1, board.completeBox(57)[1]);
     }
 
+    /**
+     * test compareTo method of board.
+     */
     @Test
     public void testCompareTo() {
         Board board2 = new Board();
@@ -367,13 +445,16 @@ public class BoardTest {
         assertFalse(board.compareTo(board3));
     }
 
+    /**
+     * test toString method of board.
+     */
     @Test
-    public void testToString(){
-        board.setLine(0,1);
-        board.setLine(5,1);
-        board.setLine(6,1);
-        board.setLine(10,1);
-        board.setBox(0,1);
+    public void testToString() {
+        board.setLine(0, 1);
+        board.setLine(5, 1);
+        board.setLine(6, 1);
+        board.setLine(10, 1);
+        board.setBox(0, 1);
         assertTrue(board.toString().contains(". ___ ."));
         assertTrue(board.toString().contains("|  1  |"));
         assertTrue(board.toString().contains("| "));
