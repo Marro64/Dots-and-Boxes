@@ -18,10 +18,27 @@ public class Server extends SocketServer{
         queue = new ArrayList<>();
     }
 
+    /**
+     * returns the description of this server.
+     *
+     * @return the server description
+     */
     public String getDescription(){return this.description;}
+
+    /**
+     * add a ServerClientHandler to the server.
+     *
+     * @param serverClientHandler to add to the server
+     */
     public synchronized void addClient(ServerClientHandler serverClientHandler){
         serverClientHandlers.add(serverClientHandler);
     }
+
+    /**
+     * remove a ServerClientHandler from the server.
+     *
+     * @param serverClientHandler to remove from the server
+     */
     public synchronized void removeClient(ServerClientHandler serverClientHandler){
         serverClientHandlers.remove(serverClientHandler);
         if (queue.contains(serverClientHandler)){
@@ -44,6 +61,12 @@ public class Server extends SocketServer{
         }
     }
 
+    /**
+     * manages the queue of serverClientHandlers,
+     * when one serverClientHandler wants to enter the queue.
+     *
+     * @param serverClientHandler to wants to enter the queue
+     */
     public synchronized void handleQueueEntry(ServerClientHandler serverClientHandler){
         queue.add(serverClientHandler);
         if (queue.size()>=2){
@@ -57,6 +80,11 @@ public class Server extends SocketServer{
         }
     }
 
+    /**
+     *
+     * @param username
+     * @return
+     */
     public boolean checkUserName(String username){
         for (ServerClientHandler handler : serverClientHandlers){
             if (handler.getUsername().equals(username)){
