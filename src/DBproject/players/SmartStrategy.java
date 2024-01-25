@@ -24,6 +24,10 @@ public class SmartStrategy implements Strategy {
         }
 
         int[] moves = game.getValidMoves();
+        if(moves.length ==0){
+            return -1;
+        }
+
         Set<Integer> allowedMoves = new HashSet<>();
         for (int i = 0; i < moves.length; i++) {
             allowedMoves.add(i);
