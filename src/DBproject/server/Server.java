@@ -11,7 +11,7 @@ import java.util.*;
 public class Server extends SocketServer{
     private Set<ServerClientHandler> serverClientHandlers;
     private List<ServerClientHandler> queue;
-    private final String description = "my server";
+    private final String description = "server Ylona";
 
     public Server(int port) throws IOException {
         super(port);
@@ -33,7 +33,7 @@ public class Server extends SocketServer{
      */
     public synchronized void addClient(ServerClientHandler serverClientHandler){
         serverClientHandlers.add(serverClientHandler);
-        System.out.println(serverClientHandler.getUsername() + " is connected");
+        System.out.println("client is connected");
     }
 
     /**
@@ -110,9 +110,9 @@ public class Server extends SocketServer{
      * @return true if there is not a client connected to the server with username,
      * or false if there already is a client connected to the server with this username
      */
-    public boolean checkUserName(String username){
+    public boolean checkUserName(String username, ServerClientHandler serverClientHandler){
         for (ServerClientHandler handler : serverClientHandlers){
-            if (handler.getUsername().equals(username)){
+            if (!handler.equals(serverClientHandler) && handler.getUsername().equals(username)){
                 return false;
             }
         }
@@ -144,6 +144,6 @@ public class Server extends SocketServer{
         }
         Server server = new Server(port);
         server.acceptConnections();
-        System.out.println("Port number of started server is " + server.getPort());
+        //System.out.println("Port number of started server is " + server.getPort());
     }
 }

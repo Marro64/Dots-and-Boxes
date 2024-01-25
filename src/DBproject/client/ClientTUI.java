@@ -172,8 +172,8 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
         Scanner scanner = new Scanner(in);
         try {
             out.print("Host? ");
-//            host = InetAddress.getByName(scanner.nextLine());
-            host = InetAddress.getByName("130.89.253.64");
+            host = InetAddress.getByName(scanner.nextLine());
+            //host = InetAddress.getByName("130.89.253.64");
         } catch (UnknownHostException ignore) {
             out.println("Invalid host.");
             setNextState(UIState.AskForHost);
@@ -187,8 +187,8 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
         int port;
         try {
             out.print("Port? ");
-//            port = scanner.nextInt();
-            port = 4567;
+            port = scanner.nextInt();
+            //port = 4567;
             if (port < 0 || port > 65535) {
                 throw new InputMismatchException();
             }

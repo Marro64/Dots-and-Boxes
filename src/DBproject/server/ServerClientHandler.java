@@ -28,7 +28,9 @@ public class ServerClientHandler {
      */
     public void handleDisconnect() {
         server.removeClient(this);
-        serverGameManager.handleDisconnect();
+        if(serverGameManager!=null){
+            serverGameManager.handleDisconnect();
+        }
     }
 
     /**
@@ -100,9 +102,10 @@ public class ServerClientHandler {
      * @param username that is included in the login message
      */
     public void receiveLogin(String username) {
-        if(server.checkUserName(username)){
+        if(server.checkUserName(username,this)){
             this.username = username;
             serverConnection.sendLogin();
+            return;
         }
         serverConnection.sendAlreadyLoggedIn();
     }

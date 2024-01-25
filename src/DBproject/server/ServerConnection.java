@@ -30,7 +30,7 @@ public class ServerConnection extends SocketConnection {
      */
     public void handleMessage(String message) {
         String[] splitMessage = message.split(Protocol.SEPARATOR, 2);
-        if (splitMessage.length != 2) {
+        if (splitMessage.length > 2) {
             System.out.println("Received input not of valid type");
             return;
         }
