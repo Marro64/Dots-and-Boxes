@@ -3,6 +3,10 @@ package DBproject.server;
 import java.io.IOException;
 import java.net.Socket;
 
+/**
+ * manages the communication between a client and the server. Communicates with the
+ * ServerGameManager if a game is currently running.
+ */
 public class ServerClientHandler {
     private Server server;
     private ServerGameManager serverGameManager;

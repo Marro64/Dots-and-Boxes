@@ -7,6 +7,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * handles incoming connections from clients and contains a queue for matching clients and starting a
+ * game. Creates a ServerGameManager when two clients are in the queue.
+ */
 public class Server extends SocketServer{
     private Set<ServerClientHandler> serverClientHandlers;
     private List<ServerClientHandler> queue;
@@ -50,7 +54,6 @@ public class Server extends SocketServer{
      * Creates a new connection handler for the given socket.
      *
      * @param socket the socket for the connection
-     * @return the connection handler
      */
     @Override
     protected void handleConnection(Socket socket) {
@@ -68,6 +71,9 @@ public class Server extends SocketServer{
      * @param serverClientHandler to wants to enter the queue
      */
     public synchronized void handleQueueEntry(ServerClientHandler serverClientHandler){
+        if (queue.contains(serverClientHandler)){
+            queue.remove(serverClientHandler);
+        }
         queue.add(serverClientHandler);
         if (queue.size()>=2){
             ServerClientHandler player1 = queue.get(0);
@@ -76,14 +82,16 @@ public class Server extends SocketServer{
                     new ServerGameManager(player1, player2);
             queue.remove(player1);
             queue.remove(player2);
-            //TODO can you enter the queue multiple times?
         }
     }
 
     /**
+     * checks if the username is valid or if there is already a client connected to
+     * the server with this username.
      *
-     * @param username
-     * @return
+     * @param username to check
+     * @return true if there is not a client connected to the server with username,
+     * or false if there already is a client connected to the server with this username
      */
     public boolean checkUserName(String username){
         for (ServerClientHandler handler : serverClientHandlers){
@@ -94,6 +102,11 @@ public class Server extends SocketServer{
         return true;
     }
 
+    /**
+     * returns array of usernames of all clients connected to the server.
+     *
+     * @return array of usernames of all clients connected to the server
+     */
     public String[] getUsers(){
         String[] users = new String[serverClientHandlers.size()];
         int i = 0;

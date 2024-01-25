@@ -5,6 +5,9 @@ import DBproject.networking.SocketConnection;
 import java.io.IOException;
 import java.net.Socket;
 
+/**
+ * uses the Protocol to communicate with a client using the framework of SocketConnection.
+ */
 public class ServerConnection extends SocketConnection {
     private ServerClientHandler serverClientHandler;
 
