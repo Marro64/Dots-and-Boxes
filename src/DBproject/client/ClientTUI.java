@@ -294,8 +294,7 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
             client.sendMove(location);
             insertNextState(UIState.InGameIdle);
         } catch (InputMismatchException | IllegalMoveException ignore) {
-            out.println("Invalid location.");
-            setNextState(UIState.AskForMove);
+            out.println("Invalid move.");
             insertNextState(UIState.AskForMove);
         }
     }
