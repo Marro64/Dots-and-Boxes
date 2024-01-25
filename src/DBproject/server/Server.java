@@ -51,6 +51,17 @@ public class Server extends SocketServer{
     }
 
     /**
+     * Accepts connections and starts a new thread for each connection.
+     * This method will block until the server socket is closed, for example by invoking closeServerSocket.
+     *
+     * @throws IOException if an I/O error occurs when waiting for a connection
+     */
+    @Override
+    public void acceptConnections() throws IOException {
+        super.acceptConnections();
+    }
+
+    /**
      * Creates a new connection handler for the given socket.
      *
      * @param socket the socket for the connection
