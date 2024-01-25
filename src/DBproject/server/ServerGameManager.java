@@ -24,11 +24,13 @@ public class ServerGameManager {
      * @param location of the move
      */
     public void handleMove(ServerClientHandler player, int location){
+        System.out.println("GM : handle move for client "+player.getUsername());
         if(game.gameOver()){
             player.sendError();
         }
         if (game.getTurn().equals(player.getUsername())){
             game.doMove(location);
+            System.out.println("GM : move done for client "+player.getUsername());
             player1.sendMove(location);
             player2.sendMove(location);
             if (game.gameOver()){
@@ -43,6 +45,7 @@ public class ServerGameManager {
                     player2.gameOver(Protocol.DRAW);
                 }
             }
+            return;
         }
         player.sendError();
     }

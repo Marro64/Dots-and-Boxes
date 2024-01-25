@@ -30,7 +30,7 @@ public class ServerConnection extends SocketConnection {
      */
     public void handleMessage(String message) {
         String[] splitMessage = message.split(Protocol.SEPARATOR, 2);
-        if (splitMessage.length != 2) {
+        if (splitMessage.length > 2) {
             System.out.println("Received input not of valid type");
             return;
         }
@@ -118,7 +118,7 @@ public class ServerConnection extends SocketConnection {
      * @param location of the next move that is played
      */
     public void sendMove(int location) {
-        super.sendMessage(Protocol.MOVE + location);
+        super.sendMessage(Protocol.MOVE + Protocol.SEPARATOR + location);
     }
 
     /**
