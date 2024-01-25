@@ -131,5 +131,6 @@ public class ServerClientHandler {
      */
     public void receiveMove(int location) {
         serverGameManager.handleMove(this, location);
+        System.out.println("ch: Move from client " + username + " received for location "+ location);
     }
 }

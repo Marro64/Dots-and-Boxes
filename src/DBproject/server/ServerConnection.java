@@ -118,7 +118,7 @@ public class ServerConnection extends SocketConnection {
      * @param location of the next move that is played
      */
     public void sendMove(int location) {
-        super.sendMessage(Protocol.MOVE + location);
+        super.sendMessage(Protocol.MOVE + Protocol.SEPARATOR + location);
     }
 
     /**
