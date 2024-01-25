@@ -239,7 +239,7 @@ public class Game {
     public String toString() {
         return board.toString() + "\n" + "Player, playing with number 1, "
                 + player1 + " score = " + player1Score + "\n" +
-                "Player, playing with number 2, " + player2 + "score = " +
+                "Player, playing with number 2, " + player2 + " score = " +
                 player2Score + "\n" + currentPlayer;
     }
 }
