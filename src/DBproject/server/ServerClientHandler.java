@@ -68,6 +68,7 @@ public class ServerClientHandler {
      */
     public void gameOver(String reason) {
         serverConnection.sendGameOver(reason);
+        serverGameManager = null;
     }
 
     /**
@@ -78,6 +79,7 @@ public class ServerClientHandler {
      */
     public void gameOver(String reason, String winner) {
         serverConnection.sendGameOver(reason, winner);
+        serverGameManager = null;
     }
 
     /**
