@@ -287,10 +287,6 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
             out.print("Line? ");
             int location = scanner.nextInt();
 
-            if (location < 0 || location > 59 || !client.getGame().isValidMove(location)) {
-                throw new IllegalMoveException();
-            }
-
             client.sendMove(location);
             insertNextState(UIState.InGameIdle);
         } catch (InputMismatchException | IllegalMoveException ignore) {
