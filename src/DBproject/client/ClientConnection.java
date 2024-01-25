@@ -7,11 +7,21 @@ import java.io.IOException;
 import java.net.InetAddress;
 
 /**
- * uses the Protocol to communicate with a server using the framework of SocketConnection.
+ * Uses the Protocol to communicate with a server using the framework of SocketConnection.
  */
 public class ClientConnection extends SocketConnection {
     private final Client client;
 
+    /**
+     * Start a connection with a server.
+     *
+     * @param host InetAddress to connect to
+     * @param port Port to connect to
+     * @param client Client to pass messages to
+     * @throws IOException If an error occurs with the connection
+     */
+    /*@ requires port >= 0 && port <= 65535;
+    */
     public ClientConnection(InetAddress host, int port, Client client) throws IOException {
         super(host, port);
         this.client = client;
@@ -28,6 +38,7 @@ public class ClientConnection extends SocketConnection {
 
     /**
      * Handles a message received from the connection.
+     * If the message adheres to the protocol, calls the appropriate handler method in the Client.
      *
      * @param message the message received from the connection
      */
@@ -97,31 +108,55 @@ public class ClientConnection extends SocketConnection {
         client.handleDisconnect();
     }
 
-    /*@ requires !clientDescription.contains("~");
+    /**
+     * Sends a hello message to the server.
+     * Passes a description that may not include the argument separator of the protocol.
+     *
+     * @param clientDescription A description to include with the message
+     */
+    /*@ requires !clientDescription.contains(Protocol.SEPARATOR);
     */
     public void sendHello(String clientDescription) {
-        assert !clientDescription.contains("~");
+        assert !clientDescription.contains(Protocol.SEPARATOR);
     super.sendMessage(Protocol.HELLO
             + Protocol.SEPARATOR + clientDescription
 //            + Protocol.SEPARATOR + Protocol.NAMEDQUEUES
     );
     }
 
-    /*@ requires !username.contains("~");
+    /**
+     * Sends a login message to the server.
+     * Passes a username that may not include the argument separator of the protocol.
+     *
+     * @param username username to include
+     */
+    /*@ requires !username.contains(Protocol.SEPARATOR);
     */
     public void sendLogin(String username) {
-        assert !username.contains("~");
+        assert !username.contains(Protocol.SEPARATOR);
         super.sendMessage(Protocol.LOGIN + Protocol.SEPARATOR + username);
     }
 
+    /**
+     * Sends a request for a list of all connected users.
+     */
     public void sendList() {
         super.sendMessage(Protocol.LIST);
     }
 
+    /**
+     * Sends a request to enter or exit the queue.
+     */
     public void sendQueue() {
-        super.sendMessage("QUEUE");
+        super.sendMessage(Protocol.QUEUE);
     }
 
+    /**
+     * Sends a move.
+     * Passes a location. Does not validate the location.
+     *
+     * @param location A location for the move
+     */
     public void sendMove(int location) {
         super.sendMessage(Protocol.MOVE + Protocol.SEPARATOR + location);
     }

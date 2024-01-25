@@ -1,5 +1,6 @@
 package DBproject.client;
 
+import DBproject.exceptions.IllegalMoveException;
 import DBproject.game.Game;
 import DBproject.players.Player;
 
@@ -56,13 +57,15 @@ public class Client {
         clientConnection.sendQueue();
     }
 
-    public void sendMove(int location) {
-        if (game.isValidMove(location)) {
-            clientConnection.sendMove(location);
-        } else {
-            System.out.println("Client.sendMove: Invalid move " + location);
-            askForMove();
+    public void sendMove(int location) throws IllegalMoveException {
+        if(!game.isValidMove(location)) {
+            throw new IllegalMoveException("Illegal Move, invalid location: " + location);
         }
+        if(!game.getTurn().equals(username)) {
+            throw new IllegalMoveException("Illegal Move, not client's turn, " +
+                    "username:" + username + ", current turn: " + game.getTurn());
+        }
+        clientConnection.sendMove(location);
     }
 
     public void receiveHello(String serverDescription) {
@@ -115,7 +118,11 @@ public class Client {
         System.out.println("client.askForMove");
         int responseMove = player.determineMove(game);
         if (responseMove >= 0) {
-            sendMove(responseMove);
+            try {
+                sendMove(responseMove);
+            } catch (IllegalMoveException e) {
+                throw new RuntimeException(e); // Checking move validity is responsibility of method that returned move
+            }
         }
     }
 
