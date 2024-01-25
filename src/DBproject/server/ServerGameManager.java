@@ -33,11 +33,11 @@ public class ServerGameManager {
             player2.sendMove(location);
             if (game.gameOver()){
                 if (game.getWinner()!=null && game.getWinner().equals(player1.getUsername())){
-                    player1.gameOver(Protocol.VICTORY + Protocol.SEPARATOR + player1.getUsername());
-                    player2.gameOver(Protocol.VICTORY + Protocol.SEPARATOR + player1.getUsername());
+                    player1.gameOver(Protocol.VICTORY, player1.getUsername());
+                    player2.gameOver(Protocol.VICTORY, player1.getUsername());
                 } else if (game.getWinner()!=null && game.getWinner().equals(player2.getUsername())) {
-                    player1.gameOver(Protocol.VICTORY + Protocol.SEPARATOR + player2.getUsername());
-                    player2.gameOver(Protocol.VICTORY + Protocol.SEPARATOR + player2.getUsername());
+                    player1.gameOver(Protocol.VICTORY, player2.getUsername());
+                    player2.gameOver(Protocol.VICTORY, player2.getUsername());
                 } else{
                     player1.gameOver(Protocol.DRAW);
                     player2.gameOver(Protocol.DRAW);

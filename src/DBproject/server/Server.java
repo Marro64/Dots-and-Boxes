@@ -2,10 +2,7 @@ package DBproject.server;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * handles incoming connections from clients and contains a queue for matching clients and starting a
@@ -36,6 +33,7 @@ public class Server extends SocketServer{
      */
     public synchronized void addClient(ServerClientHandler serverClientHandler){
         serverClientHandlers.add(serverClientHandler);
+        System.out.println(serverClientHandler.getUsername() + " is connected");
     }
 
     /**
@@ -45,8 +43,10 @@ public class Server extends SocketServer{
      */
     public synchronized void removeClient(ServerClientHandler serverClientHandler){
         serverClientHandlers.remove(serverClientHandler);
+        System.out.println(serverClientHandler.getUsername() + " is disconnected");
         if (queue.contains(serverClientHandler)){
             queue.remove(serverClientHandler);
+            System.out.println(serverClientHandler.getUsername() + " is removed from the queue");
         }
     }
 
@@ -73,15 +73,21 @@ public class Server extends SocketServer{
     public synchronized void handleQueueEntry(ServerClientHandler serverClientHandler){
         if (queue.contains(serverClientHandler)){
             queue.remove(serverClientHandler);
+            System.out.println(serverClientHandler.getUsername() + " was already in queue, now removed");
         }
         queue.add(serverClientHandler);
+        System.out.println(serverClientHandler.getUsername() + " is put in queue");
         if (queue.size()>=2){
             ServerClientHandler player1 = queue.get(0);
             ServerClientHandler player2 = queue.get(1);
             ServerGameManager gameManager =
                     new ServerGameManager(player1, player2);
+            player1.setServerGameManager(gameManager);
+            player2.setServerGameManager(gameManager);
             queue.remove(player1);
             queue.remove(player2);
+            System.out.println("A new game has started between " + player1.getUsername()
+                                       + " and " + player2.getUsername());
         }
     }
 
@@ -114,5 +120,19 @@ public class Server extends SocketServer{
             users[i++] = clientHandler.getUsername();
         }
         return users;
+    }
+
+    public static void main(String[] args) throws IOException {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Input port number");
+        int port = sc.nextInt();
+        while (port > 65536 || port < 0) {
+            System.out.println("incorrect port number");
+            System.out.println("input port number");
+            port = sc.nextInt();
+        }
+        Server server = new Server(port);
+        server.acceptConnections();
+        System.out.println("Port number of started server is " + server.getPort());
     }
 }

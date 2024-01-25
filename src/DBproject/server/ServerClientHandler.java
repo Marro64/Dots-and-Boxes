@@ -20,6 +20,9 @@ public class ServerClientHandler {
         serverConnection.start();
     }
 
+    public void setServerGameManager(ServerGameManager serverGameManager){
+        this.serverGameManager = serverGameManager;
+    }
     /**
      * handles a disconnect from the connection.
      */
