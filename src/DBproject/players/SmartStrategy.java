@@ -20,6 +20,7 @@ public class SmartStrategy implements Strategy {
         int winningMove = findWinningMove(game);
 
         if (winningMove != -1) {
+            assert(game.isValidMove(winningMove));
             return winningMove;
         }
 
@@ -30,7 +31,7 @@ public class SmartStrategy implements Strategy {
 
         Set<Integer> allowedMoves = new HashSet<>();
         for (int i = 0; i < moves.length; i++) {
-            allowedMoves.add(i);
+            allowedMoves.add(moves[i]);
         }
 
         for (int move : moves) {
@@ -45,6 +46,7 @@ public class SmartStrategy implements Strategy {
         if(allowedMoves.isEmpty()){
             int[] movesArray = game.getValidMoves();
             int random = (int) (Math.random() * movesArray.length);
+            assert(game.isValidMove(movesArray[random]));
             return movesArray[random];
         }
 
@@ -54,6 +56,7 @@ public class SmartStrategy implements Strategy {
             result[i++] = move;
         }
         int random = (int) (Math.random() * result.length);
+        assert(game.isValidMove(result[random]));
         return result[random];
     }
 
