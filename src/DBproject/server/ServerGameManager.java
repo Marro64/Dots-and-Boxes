@@ -14,6 +14,8 @@ public class ServerGameManager {
         this.player1 = player1;
         this.player2 = player2;
         game = new Game(player1.getUsername(), player2.getUsername());
+        player1.setServerGameManager(this);
+        player2.setServerGameManager(this);
         player1.newGame(this);
         player2.newGame(this);
     }
