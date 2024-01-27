@@ -92,11 +92,16 @@ public class ClientConnection extends SocketConnection {
                     String winner = messageParts[2];
                     client.receiveGameOver(reason, winner);
                     break;
+                case Protocol.LIST:
+                    String[] users = new String[messageParts.length-1];
+                    System.arraycopy(messageParts, 1, users, 0, messageParts.length - 1);
+                    client.receiveUserList(users);
+                    break;
                 default:
                     throw new IllegalArgumentException();
             }
-        } catch (IllegalArgumentException ignore) {
-            System.out.println("ClientConnection.receiveMessage caught IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            System.out.println("ClientConnection.receiveMessage caught " + e);
         }
     }
 
