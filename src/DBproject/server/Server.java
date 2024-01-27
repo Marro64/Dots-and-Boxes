@@ -93,8 +93,6 @@ public class Server extends SocketServer{
             ServerClientHandler player2 = queue.get(1);
             ServerGameManager gameManager =
                     new ServerGameManager(player1, player2);
-            player1.setServerGameManager(gameManager);
-            player2.setServerGameManager(gameManager);
             queue.remove(player1);
             queue.remove(player2);
             System.out.println("A new game has started between " + player1.getUsername()
@@ -146,6 +144,5 @@ public class Server extends SocketServer{
         }
         Server server = new Server(port);
         server.acceptConnections();
-        //System.out.println("Port number of started server is " + server.getPort());
     }
 }

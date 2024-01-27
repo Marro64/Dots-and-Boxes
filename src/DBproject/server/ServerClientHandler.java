@@ -68,6 +68,7 @@ public class ServerClientHandler {
      */
     public void gameOver(String reason) {
         serverConnection.sendGameOver(reason);
+        serverGameManager = null;
     }
 
     /**
@@ -78,6 +79,7 @@ public class ServerClientHandler {
      */
     public void gameOver(String reason, String winner) {
         serverConnection.sendGameOver(reason, winner);
+        serverGameManager = null;
     }
 
     /**
@@ -130,7 +132,7 @@ public class ServerClientHandler {
      * @param location that is included in the move message
      */
     public void receiveMove(int location) {
-        serverGameManager.handleMove(this, location);
         System.out.println("ch: Move from client " + username + " received for location "+ location);
+        serverGameManager.handleMove(this, location);
     }
 }
