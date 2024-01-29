@@ -1,40 +1,69 @@
 package DBproject.client;
 
-import java.io.*;
-import java.nio.Buffer;
-import java.util.ArrayList;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
-
+/**
+ * A simple class for reading lines from an input stream without blocking.
+ */
 class NonBlockingScanner {
     private static StringBuilder buffer;
-    private static BufferedReader reader;
+    private static Reader reader;
 
+    /**
+     * Instantiate a NonBlockingScanner with an InputStream.
+     *
+     * @param in InputStream to read from.
+     */
     protected NonBlockingScanner(InputStream in) {
-        reader = new BufferedReader(new InputStreamReader(in));
+        reader = new InputStreamReader(in);
         buffer = new StringBuilder();
     }
 
+    /**
+     * Attempt to read a line from the input.
+     * Returns null if there is no line ready or if an internal error occurred.
+     *
+     * @return A line from the input or null
+     */
     protected String readLine() {
         update();
         int endOfLine = buffer.indexOf("\n");
         if (endOfLine == -1) {
             return null;
         }
-        String line = buffer.substring(0, endOfLine);
-        buffer.delete(0, endOfLine + 1);
+        String line;
+        try {
+            line = buffer.substring(0, endOfLine);
+            buffer.delete(0, endOfLine + 1);
+        } catch (IndexOutOfBoundsException ignore) {
+            return null;
+        }
         return line.trim();
     }
 
+    /**
+     * Clears the input.
+     * Reads the incoming stream until its end is reached or until it would block and then clears the internal buffer.
+     */
+    protected void clear() {
+        update();
+        buffer = new StringBuilder();
+    }
+
+    /**
+     * Update the internal buffer with characters from the incoming stream.
+     * Reads the incoming stream until its end is reached or until it would block.
+     */
     private void update() {
         try {
             while (reader.ready()) {
-                char[] newInput = new char[100];
-                if (reader.read(newInput, 0, 100) == -1) {
-                    throw new IOException();
-                }
-
-                for (char c : newInput) {
-                    buffer.append(c);
+                int c = reader.read();
+                if (c > -1) {
+                    System.out.print((char) c);
+                    buffer.append((char) c);
                 }
             }
         } catch (IOException ignore) {
