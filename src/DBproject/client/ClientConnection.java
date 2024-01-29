@@ -125,7 +125,7 @@ public class ClientConnection extends SocketConnection {
         assert !clientDescription.contains(Protocol.SEPARATOR);
     super.sendMessage(Protocol.HELLO
             + Protocol.SEPARATOR + clientDescription
-//            + Protocol.SEPARATOR + Protocol.NAMEDQUEUES
+            + Protocol.SEPARATOR + Protocol.NAMEDQUEUES
     );
     }
 
@@ -153,7 +153,8 @@ public class ClientConnection extends SocketConnection {
      * Sends a request to enter or exit the queue.
      */
     public void sendQueue() {
-        super.sendMessage(Protocol.QUEUE);
+        super.sendMessage(Protocol.QUEUE
+        + Protocol.SEPARATOR + "MARRO");
     }
 
     /**
