@@ -91,8 +91,7 @@ public class Server extends SocketServer{
         if (queue.size()>=2){
             ServerClientHandler player1 = queue.get(0);
             ServerClientHandler player2 = queue.get(1);
-            ServerGameManager gameManager =
-                    new ServerGameManager(player1, player2);
+            new ServerGameManager(player1, player2);
             queue.remove(player1);
             queue.remove(player2);
             System.out.println("A new game has started between " + player1.getUsername()
