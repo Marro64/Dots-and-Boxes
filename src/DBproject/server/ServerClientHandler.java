@@ -20,16 +20,29 @@ public class ServerClientHandler {
         serverConnection.start();
     }
 
-    public void setServerGameManager(ServerGameManager serverGameManager){
+    /**
+     * set serverGameManager of the client.
+     * @param serverGameManager to set the serverGameManager of the client to
+     */
+    public synchronized void setServerGameManager(ServerGameManager serverGameManager){
         this.serverGameManager = serverGameManager;
     }
+
+    /**
+     * returns true of this client is already playing a game, false otherwise.
+     * @return true if this client is playing a game, false otherwise
+     */
+    public synchronized boolean isInGame(){
+        return serverGameManager!=null;
+    }
+
     /**
      * handles a disconnect from the connection.
      */
-    public void handleDisconnect() {
+    public synchronized void handleDisconnect() {
         server.removeClient(this);
         if(serverGameManager!=null){
-            serverGameManager.handleDisconnect();
+            serverGameManager.handleDisconnect(this);
         }
     }
 
@@ -66,7 +79,7 @@ public class ServerClientHandler {
      *
      * @param reason the game has ended
      */
-    public void gameOver(String reason) {
+    public synchronized void gameOver(String reason) {
         serverConnection.sendGameOver(reason);
         serverGameManager = null;
     }
@@ -77,7 +90,7 @@ public class ServerClientHandler {
      * @param reason the game has ended
      * @param winner of the game
      */
-    public void gameOver(String reason, String winner) {
+    public synchronized void gameOver(String reason, String winner) {
         serverConnection.sendGameOver(reason, winner);
         serverGameManager = null;
     }
@@ -131,8 +144,12 @@ public class ServerClientHandler {
      *
      * @param location that is included in the move message
      */
-    public void receiveMove(int location) {
+    public synchronized void receiveMove(int location) {
         System.out.println("ch: Move from client " + username + " received for location "+ location);
+        if(serverGameManager == null){
+            sendError();
+            return;
+        }
         serverGameManager.handleMove(this, location);
     }
 }

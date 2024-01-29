@@ -83,12 +83,19 @@ public class Server extends SocketServer{
      */
     public synchronized void handleQueueEntry(ServerClientHandler serverClientHandler){
         if (queue.contains(serverClientHandler)){
+            //client was already in the queue, is now removed from the queue
             queue.remove(serverClientHandler);
             System.out.println(serverClientHandler.getUsername() + " was already in queue, now removed");
+            return;
+        }
+        if (serverClientHandler.isInGame()){
+            //client is already playing a game
+            return;
         }
         queue.add(serverClientHandler);
         System.out.println(serverClientHandler.getUsername() + " is put in queue");
         if (queue.size()>=2){
+            //start a new game with two waiting clients
             ServerClientHandler player1 = queue.get(0);
             ServerClientHandler player2 = queue.get(1);
             new ServerGameManager(player1, player2);
@@ -107,7 +114,7 @@ public class Server extends SocketServer{
      * @return true if there is not a client connected to the server with username,
      * or false if there already is a client connected to the server with this username
      */
-    public boolean checkUserName(String username, ServerClientHandler serverClientHandler){
+    public synchronized boolean checkUserName(String username, ServerClientHandler serverClientHandler){
         for (ServerClientHandler handler : serverClientHandlers){
             if (!handler.equals(serverClientHandler)
                     && handler.getUsername() != null
@@ -123,7 +130,7 @@ public class Server extends SocketServer{
      *
      * @return array of usernames of all clients connected to the server
      */
-    public String[] getUsers(){
+    public synchronized String[] getUsers(){
         String[] users = new String[serverClientHandlers.size()];
         int i = 0;
         for (ServerClientHandler clientHandler : serverClientHandlers){

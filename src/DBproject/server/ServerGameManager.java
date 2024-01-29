@@ -10,7 +10,6 @@ public class ServerGameManager {
     private ServerClientHandler player1;
     private ServerClientHandler player2;
     private Game game;
-    private boolean hasSentGameOver = false;
 
     public ServerGameManager(ServerClientHandler player1, ServerClientHandler player2) {
         this.player1 = player1;
@@ -28,9 +27,10 @@ public class ServerGameManager {
      * @param player   from who the move was received
      * @param location of the move
      */
-    public void handleMove(ServerClientHandler player, int location) {
+    public synchronized void handleMove(ServerClientHandler player, int location) {
         System.out.println("GM : handle move for client " + player.getUsername());
         if (game.gameOver()) {
+            //the client tried to send a move, while the game is over
             player.sendError();
         }
         if (game.getTurn().equals(player.getUsername())) {
@@ -38,32 +38,35 @@ public class ServerGameManager {
             System.out.println("GM : move done for client " + player.getUsername());
             player1.sendMove(location);
             player2.sendMove(location);
+            //check if the move results in a game over
             if (game.gameOver()) {
                 if (game.getWinner() != null) {
-                    System.out.println("GameOver Victory");
-                    if (hasSentGameOver) {
-                        System.out.println("Whoops");
-                    }
-                    hasSentGameOver = true;
+                    //there is a winner of the game
+                    System.out.println("GameOver Victory" + game.getWinner());
                     player1.gameOver(Protocol.VICTORY, game.getWinner());
                     player2.gameOver(Protocol.VICTORY, game.getWinner());
                 } else {
+                    //game ended in a draw
                     player1.gameOver(Protocol.DRAW);
                     player2.gameOver(Protocol.DRAW);
                 }
             }
-            System.out.println("------");
             return;
         }
+        //client did not have the turn, was not allowed to send a move
         player.sendError();
     }
 
     /**
      * handles a disconnection of one of the clients.
      */
-    public void handleDisconnect() {
-        player1.gameOver(Protocol.DISCONNECT);
-        player2.gameOver(Protocol.DISCONNECT);
+    public synchronized void handleDisconnect(ServerClientHandler serverClientHandler) {
+        if (game.gameOver()){
+            //game is already over
+            return;
+        }
+        player1.gameOver(Protocol.DISCONNECT, getOtherPlayer(serverClientHandler).getUsername());
+        player2.gameOver(Protocol.DISCONNECT, getOtherPlayer(serverClientHandler).getUsername());
     }
 
     /**
@@ -82,5 +85,20 @@ public class ServerGameManager {
      */
     public String getPlayer2Name() {
         return player2.getUsername();
+    }
+
+    /**
+     * returns the other player.
+     * @param serverClientHandler the current player
+     * @return the serverClientHandler that represents the other player,
+     * or null if this player is not connected to this serverGameManager
+     */
+    public ServerClientHandler getOtherPlayer(ServerClientHandler serverClientHandler){
+        if (serverClientHandler.equals(player1)){
+            return player2;
+        } else if (serverClientHandler.equals(player2)) {
+            return player1;
+        }
+        return null;
     }
 }
