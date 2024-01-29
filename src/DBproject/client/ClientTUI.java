@@ -15,44 +15,65 @@ import java.net.UnknownHostException;
 import java.util.*;
 
 public class ClientTUI implements ClientListener, ClientMoveInput {
-    private final InputStream in;
+    private static final String HELP = "help";
+    private static final String HINT = "hint";
+    private static final String LIST = "list";
+    private final NonBlockingScanner nonBlockingScanner;
     private final PrintStream out;
     private Client client;
+    private UIState callbackState;
     private UIState state;
     private final Deque<UIState> upcomingStates;
 
     InetAddress host = null;
     int port = -1;
 
-    /*@ private invariant in != null;
+    /*@ private invariant nonBlockingScanner != null;
         private invariant out != null;
         private invariant state != null;
     */
 
     public ClientTUI(InputStream in, OutputStream out) {
-        this.in = in;
+        this.nonBlockingScanner = new NonBlockingScanner(in);
         this.out = new PrintStream(out);
         upcomingStates = new LinkedList<>();
         insertNextState(UIState.AskForHost);
     }
 
-    public synchronized void insertNextState(UIState state) {
+    private synchronized void insertNextState(UIState state) {
         System.out.println("ClientTUI.insertNextState: " + state);
         upcomingStates.push(state);
         notify();
     }
 
-    public synchronized void addState(UIState state) {
+    private synchronized void addState(UIState state) {
         System.out.println("ClientTUI.addState: " + state);
         upcomingStates.add(state);
         notify();
     }
 
-    public synchronized void clearUpcomingStates() {
+    private synchronized void clearUpcomingStates() {
         System.out.println("ClientTUI.clearUpcomingStates: " + state);
         upcomingStates.clear();
     }
 
+    private synchronized void setCallbackState(UIState state) {
+        System.out.println("ClientTUI.setCallbackState: " + state);
+        callbackState = state;
+    }
+
+    private synchronized void clearCallbackState() {
+        System.out.println("ClientTUI.clearCallbackState");
+        callbackState = null;
+    }
+
+    private synchronized void returnToCallbackState() {
+        System.out.println("ClientTUI.returnToCallbackState " + callbackState);
+        if (callbackState != null) {
+            insertNextState(callbackState);
+        }
+        clearCallbackState();
+    }
 
     @Override
     public void connectionLost() {
@@ -86,6 +107,7 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
             out.println("\t" + user);
         }
         out.println();
+        returnToCallbackState();
     }
 
     @Override
@@ -123,13 +145,37 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
         }
     }
 
+    private void receiveUserInput() {
+        String input = nonBlockingScanner.readLine();
+        if (input != null) {
+            parseUserInput(input);
+        }
+    }
+
+    private void parseUserInput(String input) {
+        input = input.trim();
+        if (input.equalsIgnoreCase(LIST)) {
+            requestUserList();
+            return;
+        }
+        if(callbackState != null) {
+            switch (callbackState) {
+                case AskForHost -> receiveHost(input);
+                case AskForPort -> receivePort(input);
+                case AskForPlayerType -> receivePlayerType(input);
+                case AskForAILevel -> receiveAILevel(input);
+                case AskForUsername -> receiveUsername(input);
+                case AskForMove -> receiveMove(input);
+            }
+        }
+    }
+
     private synchronized UIState getNextState() {
         if (upcomingStates.peek() != null) {
             state = upcomingStates.poll();
             System.out.println("ClientTUI.getNextState: " + state);
             return state;
         }
-        System.out.println("ClientTUI.getNextState: " + UIState.Idle);
         return UIState.Idle;
     }
 
@@ -149,7 +195,7 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
                 case ReceivedNewGame -> receivedNewGame();
                 case AskForMove -> askForMove();
                 case ReceivedError -> receivedError();
-                case ReceivedMove -> receivedMove();
+                case ReceivedMove -> receivedOpponentMove();
                 case GameOverDisconnected, GameOverVictory, GameOverDraw, GameOverDefeat -> gameOver();
                 case Idle, InGameIdle, WaitForHello, WaitForUsernameReply, WaitForNewGame -> waitForStateUpdate();
             }
@@ -161,16 +207,21 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
 
     private synchronized void waitForStateUpdate() {
         try {
-            wait();
+            wait(50);
+            receiveUserInput();
         } catch (InterruptedException ignore) {
         }
     }
 
     private void askForHost() {
-        Scanner scanner = new Scanner(in);
+        setCallbackState(UIState.AskForHost);
+        out.print("Host? ");
+    }
+
+    private void receiveHost(String input) {
+        clearCallbackState();
         try {
-            out.print("Host? ");
-            host = InetAddress.getByName(scanner.nextLine());
+            host = InetAddress.getByName(input);
             //host = InetAddress.getByName("130.89.253.64");
         } catch (UnknownHostException ignore) {
             out.println("Invalid host.");
@@ -181,16 +232,20 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
     }
 
     private void askForPort() {
-        Scanner scanner = new Scanner(in);
+        setCallbackState(UIState.AskForPort);
+        out.print("Port? ");
+    }
+
+    private void receivePort(String input) {
+        clearCallbackState();
         int port;
         try {
-            out.print("Port? ");
-            port = scanner.nextInt();
+            port = Integer.parseInt(input);
             //port = 4567;
             if (port < 0 || port > 65535) {
                 throw new InputMismatchException();
             }
-        } catch (InputMismatchException ignore) {
+        } catch (NumberFormatException | InputMismatchException ignore) {
             out.println("Invalid port.");
             addState(UIState.AskForPort);
             return;
@@ -218,13 +273,16 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
     }
 
     private void askForPlayerType() {
-        Scanner scanner = new Scanner(in);
-        out.print("AI or Human player? ");
-        String response = scanner.nextLine();
-        if (response.toUpperCase().startsWith("H")) {
+        setCallbackState(UIState.AskForPlayerType);
+        out.print("[A]I or [H]uman player? ");
+    }
+
+    private void receivePlayerType(String input) {
+        clearCallbackState();
+        if (input.toUpperCase().startsWith("H")) {
             client.setPlayer(new HumanPlayer(this));
             addState(UIState.AskForUsername);
-        } else if (response.toUpperCase().startsWith("A")) {
+        } else if (input.toUpperCase().startsWith("A")) {
             addState(UIState.AskForAILevel);
         } else {
             out.println("Invalid player type.");
@@ -233,13 +291,16 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
     }
 
     private void askForAILevel() {
-        Scanner scanner = new Scanner(in);
-        out.print("AI Level (Naive or Smart)? ");
-        String response = scanner.nextLine();
+        setCallbackState(UIState.AskForAILevel);
+        out.print("AI Level ([N]aive or [S]mart)? ");
+    }
+
+    private void receiveAILevel(String input) {
+        clearCallbackState();
         Strategy strategy;
-        if (response.toUpperCase().startsWith("N")) {
+        if (input.toUpperCase().startsWith("N")) {
             strategy = new NaiveStrategy();
-        } else if (response.toUpperCase().startsWith("S")) {
+        } else if (input.toUpperCase().startsWith("S")) {
             strategy = new SmartStrategy();
         } else {
             out.println("Invalid player type.");
@@ -251,17 +312,18 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
     }
 
     private void askForUsername() {
-        Scanner scanner = new Scanner(in);
-        String username;
-
+        setCallbackState(UIState.AskForUsername);
         out.print("Username? ");
-        username = scanner.nextLine();
-        if (username.contains(Protocol.SEPARATOR)) {
+    }
+
+    private void receiveUsername(String input) {
+        clearCallbackState();
+        if (input.contains(Protocol.SEPARATOR)) {
             out.println("Invalid username.");
             addState(UIState.AskForUsername);
             return;
         }
-        client.sendLogin(username);
+        client.sendLogin(input);
         addState(UIState.WaitForUsernameReply);
     }
 
@@ -289,19 +351,22 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
     }
 
     private void askForMove() {
-        Scanner scanner = new Scanner(in);
-        try {
-            out.print("Line? ");
-            String input = scanner.nextLine();
+        setCallbackState(UIState.AskForMove);
+        out.print("Line? ");
+    }
 
-            if(input.toLowerCase().startsWith("h")) {
+    private void receiveMove(String input) {
+        clearCallbackState();
+        try {
+            if (input.toLowerCase().startsWith("h")) {
                 displayHint();
                 addState(UIState.AskForMove);
             } else {
                 int location = Integer.parseInt(input);
                 client.sendMove(location);
             }
-        } catch (IllegalMoveException | NumberFormatException ignore) {
+        } catch (IllegalMoveException |
+                 NumberFormatException ignore) {
             out.println("Invalid move.");
             addState(UIState.AskForMove);
         }
@@ -313,7 +378,7 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
         out.println("Hint: line " + location);
     }
 
-    private void receivedMove() {
+    private void receivedOpponentMove() {
         out.println(client.getGame().toString());
     }
 
@@ -340,6 +405,16 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
     private void receivedError() {
         out.println("An error occurred.");
         addState(UIState.Exit);
+    }
+
+    private void requestUserList() {
+        if (client != null) {
+            client.sendUserListRequest();
+        }
+    }
+
+    private void printHelp() {
+
     }
 
     public static void main(String[] args) {

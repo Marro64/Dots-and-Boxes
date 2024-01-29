@@ -110,7 +110,9 @@ public class Server extends SocketServer{
      */
     public boolean checkUserName(String username, ServerClientHandler serverClientHandler){
         for (ServerClientHandler handler : serverClientHandlers){
-            if (!handler.equals(serverClientHandler) && handler.getUsername().equals(username)){
+            if (!handler.equals(serverClientHandler)
+                    && handler.getUsername() != null
+                    && handler.getUsername().equals(username)){
                 return false;
             }
         }
