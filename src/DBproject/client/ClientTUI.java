@@ -157,6 +157,9 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
         if (input.equalsIgnoreCase(LIST)) {
             requestUserList();
             return;
+        } else if(input.equalsIgnoreCase("QUEUE")) { // todo: remove
+            client.sendQueueEntry();
+            return;
         }
         if(callbackState != null) {
             switch (callbackState) {
