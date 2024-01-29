@@ -15,13 +15,13 @@ public class ClientConnection extends SocketConnection {
     /**
      * Start a connection with a server.
      *
-     * @param host InetAddress to connect to
-     * @param port Port to connect to
+     * @param host   InetAddress to connect to
+     * @param port   Port to connect to
      * @param client Client to pass messages to
      * @throws IOException If an error occurs with the connection
      */
     /*@ requires port >= 0 && port <= 65535;
-    */
+     */
     public ClientConnection(InetAddress host, int port, Client client) throws IOException {
         super(host, port);
         this.client = client;
@@ -93,7 +93,7 @@ public class ClientConnection extends SocketConnection {
                     client.receiveGameOver(reason, winner);
                     break;
                 case Protocol.LIST:
-                    String[] users = new String[messageParts.length-1];
+                    String[] users = new String[messageParts.length - 1];
                     System.arraycopy(messageParts, 1, users, 0, messageParts.length - 1);
                     client.receiveUserList(users);
                     break;
@@ -120,13 +120,10 @@ public class ClientConnection extends SocketConnection {
      * @param clientDescription A description to include with the message
      */
     /*@ requires !clientDescription.contains(Protocol.SEPARATOR);
-    */
+     */
     public void sendHello(String clientDescription) {
         assert !clientDescription.contains(Protocol.SEPARATOR);
-    super.sendMessage(Protocol.HELLO
-            + Protocol.SEPARATOR + clientDescription
-            + Protocol.SEPARATOR + Protocol.NAMEDQUEUES
-    );
+        super.sendMessage(Protocol.HELLO + Protocol.SEPARATOR + clientDescription);
     }
 
     /**
@@ -136,7 +133,7 @@ public class ClientConnection extends SocketConnection {
      * @param username username to include
      */
     /*@ requires !username.contains(Protocol.SEPARATOR);
-    */
+     */
     public void sendLogin(String username) {
         assert !username.contains(Protocol.SEPARATOR);
         super.sendMessage(Protocol.LOGIN + Protocol.SEPARATOR + username);
@@ -153,8 +150,7 @@ public class ClientConnection extends SocketConnection {
      * Sends a request to enter or exit the queue.
      */
     public void sendQueue() {
-        super.sendMessage(Protocol.QUEUE
-        + Protocol.SEPARATOR + "MARRO");
+        super.sendMessage(Protocol.QUEUE);
     }
 
     /**
