@@ -7,7 +7,7 @@ import dbproject.game.Game;
  * human player of a Dots and Boxes game.
  */
 public class HumanPlayer extends Player {
-    ClientMoveInput input;
+    private final ClientMoveInput input;
     public HumanPlayer(ClientMoveInput input) {
         this.input = input;
     }
