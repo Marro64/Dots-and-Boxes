@@ -23,7 +23,7 @@ public class Board {
 
     // Declaring the colors
     public static final String ANSI_BLUE = "\u001B[34m";
-    public static final String ANSI_RED ="\u001B[31m";
+    public static final String ANSI_RED = "\u001B[31m";
 
     /*@
         public invariant lines.length < (DIM-1)*DIM + (DIM-1)*DIM ;
@@ -43,16 +43,18 @@ public class Board {
     /**
      * Creates an empty board.
      */
-    /*@ ensures (\forall int i; (i >= 0 && i < (DIM-1)*DIM + (DIM-1)*DIM); lines[i] == 0);
+    /*@
+        ensures (\forall int i; (i >= 0 && i < (DIM-1)*DIM + (DIM-1)*DIM); lines[i] == 0);
         ensures (\forall int i; (i >= 0 && i < (DIM-1)*(DIM-1)); boxes[i] == 0);
     @*/
     public Board() {
         lines = new int[(DIM - 1) * DIM + (DIM - 1) * DIM];
         boxes = new int[(DIM - 1) * (DIM - 1)];
-
+        //create all lines
         for (int i = 0; i < (DIM - 1) * DIM + (DIM - 1) * DIM; i++) {
             lines[i] = 0;
         }
+        //create all boxes
         for (int i = 0; i < (DIM - 1) * (DIM - 1); i++) {
             boxes[i] = 0;
         }
@@ -61,9 +63,11 @@ public class Board {
     /**
      * Creates a deep copy of this board.
      */
-    /*@ ensures \result != this;
-     ensures (\forall int i; (i >= 0 && i < (DIM-1)*DIM + (DIM-1)*DIM); \result.lines[i] == this.lines[i]);
-     pure
+    /*@
+        ensures \result != this;
+        ensures (\forall int i; (i >= 0 && i < (DIM-1)*DIM + (DIM-1)*DIM); \result.lines[i] == this.lines[i]);
+        ensures (\forall int i; (i >= 0 && i < (DIM-1)*(DIM-1)); \result.boxes[i] == this. boxes[i]);
+        pure
      @*/
     public Board deepCopy() {
         Board copiedBoard = new Board();
@@ -273,7 +277,7 @@ public class Board {
     /**
      * Returns the content of a vertical line represented by (row, column) pair.
      *
-     * @param row the row of the line
+     * @param row    the row of the line
      * @param column the column of the line
      * @return the content of the line
      */
@@ -459,8 +463,9 @@ public class Board {
         pure
     */
     public int completeBoxAbove(int location) {
-        if(!isHorizontalLine(location) || getRowColHorizontal(location)[0]==DIM-1){
-            throw new IllegalArgumentException("location is not horizontal line that has a box above it");
+        if (!isHorizontalLine(location) || getRowColHorizontal(location)[0] == DIM - 1) {
+            throw new IllegalArgumentException(
+                    "location is not horizontal line that has a box above it");
         }
         if (getLine(location + (DIM - 1)) == 0 || getLine(location + DIM) == 0 || getLine(
                 location + (DIM + DIM - 1)) == 0) {
@@ -486,8 +491,9 @@ public class Board {
         pure
     */
     public int completeBoxUnder(int location) {
-        if(!isHorizontalLine(location)||getRowColHorizontal(location)[0] == 0){
-            throw new IllegalArgumentException("location is not horizontal line that has a box under it");
+        if (!isHorizontalLine(location) || getRowColHorizontal(location)[0] == 0) {
+            throw new IllegalArgumentException(
+                    "location is not horizontal line that has a box under it");
         }
         if (getLine(location - (DIM - 1)) == 0 || getLine(location - DIM) == 0 || getLine(
                 location - (DIM + DIM - 1)) == 0) {
@@ -515,8 +521,9 @@ public class Board {
         pure
     */
     public int completeBoxRight(int location) {
-        if(!isVerticalLine(location)||getRowColVertical(location)[1]== DIM-1){
-            throw new IllegalArgumentException("location is not vertical line that has a box right of it");
+        if (!isVerticalLine(location) || getRowColVertical(location)[1] == DIM - 1) {
+            throw new IllegalArgumentException(
+                    "location is not vertical line that has a box right of it");
         }
         if (getLine(location + 1) == 0 || getLine(location + DIM) == 0 || getLine(
                 location - (DIM - 1)) == 0) {
@@ -542,8 +549,9 @@ public class Board {
         pure
     */
     public int completeBoxLeft(int location) {
-        if(!isVerticalLine(location) || getRowColVertical(location)[1] == 0){
-            throw new IllegalArgumentException("location is not vertical line that has a box left of it");
+        if (!isVerticalLine(location) || getRowColVertical(location)[1] == 0) {
+            throw new IllegalArgumentException(
+                    "location is not vertical line that has a box left of it");
         }
         if (getLine(location - 1) == 0 || getLine(location - DIM) == 0 || getLine(
                 location + (DIM - 1)) == 0) {
@@ -567,9 +575,10 @@ public class Board {
                 for (int j = 0; j < DIM - 1; j++) {
                     //printing horizontal lines (that start with a dot)
                     row += ".";
-                    if (!(getHorizontalLine(i / 2, j) == 0)) {
-                        //row += " " + getHorizontalLine(i / 2, j) + " ";
-                        row += " " + "___" + " ";
+                    if (getHorizontalLine(i / 2, j) == 1) {
+                        row += " " + ANSI_RED + "___" + ANSI_RESET + " ";
+                    } else if (getHorizontalLine(i / 2, j) == 2) {
+                        row += " " + ANSI_BLUE + "___" + ANSI_RESET + " ";
                     } else {
                         row += " " + "   " + " ";
                     }
@@ -578,27 +587,27 @@ public class Board {
             } else {
                 for (int j = 0; j < DIM - 1; j++) {
                     //printing vertical lines, which also include the content of the boxes on that line
-                    if (!(getVerticalLine(i / 2, j) == 0)) {
-                        //row += getVerticalLine(i / 2, j) + " ";
-                        row += "|" + "  ";
+                    if (getVerticalLine(i / 2, j) == 1) {
+                        row += ANSI_RED + "|" + ANSI_RESET + "  ";
+                    } else if (getVerticalLine(i / 2, j) == 2) {
+                        row += ANSI_BLUE + "|" + ANSI_RESET + "  ";
                     } else {
                         row += "  " + " ";
                     }
-                    if (getBox(i/2,j)==1){
-                        row += ANSI_RED + getBox(i/2, j) + ANSI_RESET + "  ";
-                    }
-                    else if (getBox(i/2,j)==2){
-                        row += ANSI_BLUE + getBox(i/2, j) + ANSI_RESET + "  ";
-                    }
-                    else {
+                    if (getBox(i / 2, j) == 1) {
+                        row += ANSI_RED + getBox(i / 2, j) + ANSI_RESET + "  ";
+                    } else if (getBox(i / 2, j) == 2) {
+                        row += ANSI_BLUE + getBox(i / 2, j) + ANSI_RESET + "  ";
+                    } else {
                         row += " " + "  ";
                     }
                 }
-                if (!(getVerticalLine(i / 2, DIM - 1) == 0)) {
-                    //row += getVerticalLine(i / 2, DIM - 1);
-                    row += "|";
+                if (getVerticalLine(i / 2, DIM - 1) == 1) {
+                    row += ANSI_RED + "|" + ANSI_RESET;
+                } else if (getVerticalLine(i / 2, DIM - 1) == 2) {
+                    row += ANSI_BLUE + "|" + ANSI_RESET;
                 } else {
-                    row += " ";
+                    row += "  ";
                 }
             }
             s = s + row + DELIM + NUMBERING[i] + "\n";

@@ -237,9 +237,10 @@ public class Game {
      * @return the game situation as a String
      */
     public String toString() {
-        return board.toString() + "\n" + "Player, playing with number 1, "
-                + player1 + " score = " + player1Score + "\n" +
-                "Player, playing with number 2, " + player2 + " score = " +
+        return board.toString() + "\n" +
+                "Player, " + Board.ANSI_RED + "playing with number 1, " + Board.ANSI_RESET + player1 + " score = "
+                + player1Score + "\n" +
+                "Player, "+ Board.ANSI_BLUE + "playing with number 2, " + Board.ANSI_RESET + player2 + " score = " +
                 player2Score + "\n" + "Current player is "+ currentPlayer;
     }
 }
