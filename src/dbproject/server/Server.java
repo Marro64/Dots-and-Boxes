@@ -5,12 +5,12 @@ import java.net.Socket;
 import java.util.*;
 
 /**
- * handles incoming connections from clients and contains a queue for matching clients and starting a
- * game. Creates a ServerGameManager when two clients are in the queue.
+ * handles incoming connections from clients and contains a queue for matching clients and
+ * starting a game. Creates a ServerGameManager when two clients are in the queue.
  */
-public class Server extends SocketServer{
-    private Set<ServerClientHandler> serverClientHandlers;
-    private List<ServerClientHandler> queue;
+public class Server extends SocketServer {
+    private final Set<ServerClientHandler> serverClientHandlers;
+    private final List<ServerClientHandler> queue;
     private final String description = "server Ylona";
 
     public Server(int port) throws IOException {
@@ -24,14 +24,14 @@ public class Server extends SocketServer{
      *
      * @return the server description
      */
-    public String getDescription(){return this.description;}
+    public String getDescription() { return this.description; }
 
     /**
      * add a ServerClientHandler to the server.
      *
      * @param serverClientHandler to add to the server
      */
-    public synchronized void addClient(ServerClientHandler serverClientHandler){
+    public synchronized void addClient(ServerClientHandler serverClientHandler) {
         serverClientHandlers.add(serverClientHandler);
         System.out.println("client is connected");
     }
@@ -41,10 +41,10 @@ public class Server extends SocketServer{
      *
      * @param serverClientHandler to remove from the server
      */
-    public synchronized void removeClient(ServerClientHandler serverClientHandler){
+    public synchronized void removeClient(ServerClientHandler serverClientHandler) {
         serverClientHandlers.remove(serverClientHandler);
         System.out.println(serverClientHandler.getUsername() + " is disconnected");
-        if (queue.contains(serverClientHandler)){
+        if (queue.contains(serverClientHandler)) {
             queue.remove(serverClientHandler);
             System.out.println(serverClientHandler.getUsername() + " is removed from the queue");
         }
@@ -52,7 +52,8 @@ public class Server extends SocketServer{
 
     /**
      * Accepts connections and starts a new thread for each connection.
-     * This method will block until the server socket is closed, for example by invoking closeServerSocket.
+     * This method will block until the server socket is closed, for example by invoking
+     * closeServerSocket.
      *
      * @throws IOException if an I/O error occurs when waiting for a connection
      */
@@ -81,28 +82,30 @@ public class Server extends SocketServer{
      *
      * @param serverClientHandler to wants to enter the queue
      */
-    public synchronized void handleQueueEntry(ServerClientHandler serverClientHandler){
-        if (queue.contains(serverClientHandler)){
+    public synchronized void handleQueueEntry(ServerClientHandler serverClientHandler) {
+        if (queue.contains(serverClientHandler)) {
             //client was already in the queue, is now removed from the queue
             queue.remove(serverClientHandler);
-            System.out.println(serverClientHandler.getUsername() + " was already in queue, now removed");
+            System.out.println(
+                    serverClientHandler.getUsername() + " was already in queue, now removed");
             return;
         }
-        if (serverClientHandler.isInGame()){
+        if (serverClientHandler.isInGame()) {
             //client is already playing a game
             return;
         }
         queue.add(serverClientHandler);
         System.out.println(serverClientHandler.getUsername() + " is put in queue");
-        if (queue.size()>=2){
+        if (queue.size() >= 2) {
             //start a new game with two waiting clients
             ServerClientHandler player1 = queue.get(0);
             ServerClientHandler player2 = queue.get(1);
             new ServerGameManager(player1, player2);
             queue.remove(player1);
             queue.remove(player2);
-            System.out.println("A new game has started between " + player1.getUsername()
-                                       + " and " + player2.getUsername());
+            System.out.println(
+                    "A new game has started between " + player1.getUsername() + " and "
+                            + player2.getUsername());
         }
     }
 
@@ -114,8 +117,9 @@ public class Server extends SocketServer{
      * @return true if there is not a client connected to the server with username,
      * or false if there already is a client connected to the server with this username
      */
-    public synchronized boolean checkUserName(String username, ServerClientHandler serverClientHandler){
-        for (ServerClientHandler handler : serverClientHandlers){
+    public synchronized boolean checkUserName(String username,
+                                              ServerClientHandler serverClientHandler){
+        for (ServerClientHandler handler : serverClientHandlers) {
             if (!handler.equals(serverClientHandler)
                     && handler.getUsername() != null
                     && handler.getUsername().equals(username)){
@@ -130,10 +134,10 @@ public class Server extends SocketServer{
      *
      * @return array of usernames of all clients connected to the server
      */
-    public synchronized String[] getUsers(){
+    public synchronized String[] getUsers() {
         String[] users = new String[serverClientHandlers.size()];
         int i = 0;
-        for (ServerClientHandler clientHandler : serverClientHandlers){
+        for (ServerClientHandler clientHandler : serverClientHandlers) {
             users[i++] = clientHandler.getUsername();
         }
         return users;

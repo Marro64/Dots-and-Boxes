@@ -9,7 +9,7 @@ import java.net.Socket;
  * uses the Protocol to communicate with a client using the framework of SocketConnection.
  */
 public class ServerConnection extends SocketConnection {
-    private ServerClientHandler serverClientHandler;
+    private final ServerClientHandler serverClientHandler;
 
     /**
      * Create a new SocketConnection. This is not meant to be used directly.
@@ -18,7 +18,8 @@ public class ServerConnection extends SocketConnection {
      * @param socket the socket for this connection
      * @throws IOException if there is an I/O exception while initializing the Reader/Writer objects
      */
-    public ServerConnection(Socket socket, ServerClientHandler serverClientHandler) throws IOException {
+    public ServerConnection(Socket socket, ServerClientHandler serverClientHandler)
+            throws IOException {
         super(socket);
         this.serverClientHandler = serverClientHandler;
     }
@@ -88,9 +89,9 @@ public class ServerConnection extends SocketConnection {
      * @param users different usernames that are currently logged into the server
      */
     public void sendList(String[] users) {
-        String result = "";
-        for (int i = 0; i < users.length; i++) {
-            result = result + Protocol.SEPARATOR + users[i];
+        StringBuilder result = new StringBuilder();
+        for (String user : users) {
+            result.append(Protocol.SEPARATOR).append(user);
         }
         if (result.isEmpty()) {
             super.sendMessage(Protocol.LIST);

@@ -7,9 +7,9 @@ import dbproject.networking.Protocol;
  * manages a game between two clients.
  */
 public class ServerGameManager {
-    private ServerClientHandler player1;
-    private ServerClientHandler player2;
-    private Game game;
+    private final ServerClientHandler player1;
+    private final ServerClientHandler player2;
+    private final Game game;
 
     public ServerGameManager(ServerClientHandler player1, ServerClientHandler player2) {
         this.player1 = player1;
@@ -61,7 +61,7 @@ public class ServerGameManager {
      * handles a disconnection of one of the clients.
      */
     public synchronized void handleDisconnect(ServerClientHandler serverClientHandler) {
-        if (game.gameOver()){
+        if (game.gameOver()) {
             //game is already over
             return;
         }
@@ -93,8 +93,8 @@ public class ServerGameManager {
      * @return the serverClientHandler that represents the other player,
      * or null if this player is not connected to this serverGameManager
      */
-    public ServerClientHandler getOtherPlayer(ServerClientHandler serverClientHandler){
-        if (serverClientHandler.equals(player1)){
+    public ServerClientHandler getOtherPlayer(ServerClientHandler serverClientHandler) {
+        if (serverClientHandler.equals(player1)) {
             return player2;
         } else if (serverClientHandler.equals(player2)) {
             return player1;
