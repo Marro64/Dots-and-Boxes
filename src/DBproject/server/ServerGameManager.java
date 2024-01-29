@@ -1,4 +1,5 @@
 package DBproject.server;
+
 import DBproject.game.Game;
 import DBproject.networking.Protocol;
 
@@ -9,8 +10,9 @@ public class ServerGameManager {
     private ServerClientHandler player1;
     private ServerClientHandler player2;
     private Game game;
+    private boolean hasSentGameOver = false;
 
-    public ServerGameManager(ServerClientHandler player1, ServerClientHandler player2){
+    public ServerGameManager(ServerClientHandler player1, ServerClientHandler player2) {
         this.player1 = player1;
         this.player2 = player2;
         game = new Game(player1.getUsername(), player2.getUsername());
@@ -22,31 +24,35 @@ public class ServerGameManager {
 
     /**
      * handles a move received from a client.
-     * @param player from who the move was received
+     *
+     * @param player   from who the move was received
      * @param location of the move
      */
-    public void handleMove(ServerClientHandler player, int location){
-        System.out.println("GM : handle move for client "+player.getUsername());
-        if(game.gameOver()){
+    public void handleMove(ServerClientHandler player, int location) {
+        System.out.println("GM : handle move for client " + player.getUsername());
+        if (game.gameOver()) {
             player.sendError();
         }
-        if (game.getTurn().equals(player.getUsername())){
+        if (game.getTurn().equals(player.getUsername())) {
             game.doMove(location);
-            System.out.println("GM : move done for client "+player.getUsername());
+            System.out.println("GM : move done for client " + player.getUsername());
             player1.sendMove(location);
             player2.sendMove(location);
-            if (game.gameOver()){
-                if (game.getWinner()!=null && game.getWinner().equals(player1.getUsername())){
-                    player1.gameOver(Protocol.VICTORY, player1.getUsername());
-                    player2.gameOver(Protocol.VICTORY, player1.getUsername());
-                } else if (game.getWinner()!=null && game.getWinner().equals(player2.getUsername())) {
-                    player1.gameOver(Protocol.VICTORY, player2.getUsername());
-                    player2.gameOver(Protocol.VICTORY, player2.getUsername());
-                } else{
+            if (game.gameOver()) {
+                if (game.getWinner() != null) {
+                    System.out.println("GameOver Victory");
+                    if (hasSentGameOver) {
+                        System.out.println("Whoops");
+                    }
+                    hasSentGameOver = true;
+                    player1.gameOver(Protocol.VICTORY, game.getWinner());
+                    player2.gameOver(Protocol.VICTORY, game.getWinner());
+                } else {
                     player1.gameOver(Protocol.DRAW);
                     player2.gameOver(Protocol.DRAW);
                 }
             }
+            System.out.println("------");
             return;
         }
         player.sendError();
@@ -55,24 +61,26 @@ public class ServerGameManager {
     /**
      * handles a disconnection of one of the clients.
      */
-    public void handleDisconnect(){
+    public void handleDisconnect() {
         player1.gameOver(Protocol.DISCONNECT);
         player2.gameOver(Protocol.DISCONNECT);
     }
 
     /**
      * returns the name of player1.
+     *
      * @return the name of player1
      */
-    public String getPlayer1Name(){
+    public String getPlayer1Name() {
         return player1.getUsername();
     }
 
     /**
      * returns the name of player2.
+     *
      * @return the name of player2
      */
-    public String getPlayer2Name(){
+    public String getPlayer2Name() {
         return player2.getUsername();
     }
 }
