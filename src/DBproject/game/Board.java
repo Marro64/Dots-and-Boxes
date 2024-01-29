@@ -567,9 +567,10 @@ public class Board {
                 for (int j = 0; j < DIM - 1; j++) {
                     //printing horizontal lines (that start with a dot)
                     row += ".";
-                    if (!(getHorizontalLine(i / 2, j) == 0)) {
-                        //row += " " + getHorizontalLine(i / 2, j) + " ";
-                        row += " " + "___" + " ";
+                    if (getHorizontalLine(i / 2, j) == 1) {
+                        row += " " + ANSI_RED + "___" + ANSI_RESET + " ";
+                    } else if (getHorizontalLine(i / 2, j) == 2) {
+                        row += " " + ANSI_BLUE + "___" + ANSI_RESET + " ";
                     } else {
                         row += " " + "   " + " ";
                     }
@@ -578,9 +579,10 @@ public class Board {
             } else {
                 for (int j = 0; j < DIM - 1; j++) {
                     //printing vertical lines, which also include the content of the boxes on that line
-                    if (!(getVerticalLine(i / 2, j) == 0)) {
-                        //row += getVerticalLine(i / 2, j) + " ";
-                        row += "|" + "  ";
+                    if (getVerticalLine(i / 2, j) == 1) {
+                        row += ANSI_RED + "|" + ANSI_RESET + "  ";
+                    } else if (getVerticalLine(i / 2, j) == 2) {
+                        row += ANSI_BLUE + "|" + ANSI_RESET + "  ";
                     } else {
                         row += "  " + " ";
                     }
@@ -594,11 +596,12 @@ public class Board {
                         row += " " + "  ";
                     }
                 }
-                if (!(getVerticalLine(i / 2, DIM - 1) == 0)) {
-                    //row += getVerticalLine(i / 2, DIM - 1);
-                    row += "|";
+                if (getVerticalLine(i / 2, DIM -1) == 1) {
+                    row += ANSI_RED + "|" + ANSI_RESET;
+                } else if (getVerticalLine(i / 2, DIM -1) == 2) {
+                    row += ANSI_BLUE + "|" + ANSI_RESET;
                 } else {
-                    row += " ";
+                    row += "  ";
                 }
             }
             s = s + row + DELIM + NUMBERING[i] + "\n";
