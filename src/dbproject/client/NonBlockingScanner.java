@@ -24,6 +24,7 @@ class NonBlockingScanner {
 
     /**
      * Attempt to read a line from the input.
+     * <p>
      * Returns null if there is no line ready or if an internal error occurred.
      *
      * @return A line from the input or null
@@ -46,7 +47,9 @@ class NonBlockingScanner {
 
     /**
      * Clears the input.
-     * Reads the incoming stream until its end is reached or until it would block and then clears the internal buffer.
+     * <p>
+     * Reads the incoming stream until its end is reached or until it would block and then clears
+     * the internal buffer.
      */
     protected void clear() {
         update();
@@ -55,6 +58,7 @@ class NonBlockingScanner {
 
     /**
      * Update the internal buffer with characters from the incoming stream.
+     * <p>
      * Reads the incoming stream until its end is reached or until it would block.
      */
     private void update() {
@@ -62,7 +66,6 @@ class NonBlockingScanner {
             while (reader.ready()) {
                 int c = reader.read();
                 if (c > -1) {
-                    System.out.print((char) c);
                     buffer.append((char) c);
                 }
             }
