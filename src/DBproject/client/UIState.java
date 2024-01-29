@@ -1,5 +1,8 @@
 package DBproject.client;
 
+/**
+ * A list of states that can be used by a UI.
+ */
 public enum UIState {
     AskForHost,
     AskForPort,

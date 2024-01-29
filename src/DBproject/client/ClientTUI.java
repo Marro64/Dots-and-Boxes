@@ -12,8 +12,13 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.Deque;
+import java.util.InputMismatchException;
+import java.util.LinkedList;
 
+/**
+ * A TUI for the clients of a Dots n Boxes game.
+ */
 public class ClientTUI implements ClientListener, ClientMoveInput {
     private static final String HELP = "help";
     private static final String HINT = "hint";
@@ -30,9 +35,14 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
 
     /*@ private invariant nonBlockingScanner != null;
         private invariant out != null;
-        private invariant state != null;
     */
 
+    /**
+     * Creates a new TUI for a dots n boxes game.
+     *
+     * @param in InputStream to use
+     * @param out OutputStream to use
+     */
     public ClientTUI(InputStream in, OutputStream out) {
         this.nonBlockingScanner = new NonBlockingScanner(in);
         this.out = new PrintStream(out);
@@ -40,6 +50,12 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
         insertNextState(UIState.AskForHost);
     }
 
+    /**
+     * Inserts a state to be executed immediately after the current one finishes.
+     * Later calls to this method take priority over earlier ones.
+     *
+     * @param state The state to insert.
+     */
     private synchronized void insertNextState(UIState state) {
         System.out.println("ClientTUI.insertNextState: " + state);
         upcomingStates.push(state);
@@ -157,11 +173,17 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
         if (input.equalsIgnoreCase(LIST)) {
             requestUserList();
             return;
-        } else if(input.equalsIgnoreCase("QUEUE")) { // todo: remove
+        } else if (input.equalsIgnoreCase("QUEUE")) { // todo: remove
             client.sendQueueEntry();
             return;
+        } else if (input.equalsIgnoreCase("MOVE")) {
+            try {
+                client.sendMove(0);
+            } catch (IllegalMoveException e) {
+                throw new RuntimeException(e);
+            }
         }
-        if(callbackState != null) {
+        if (callbackState != null) {
             switch (callbackState) {
                 case AskForHost -> receiveHost(input);
                 case AskForPort -> receivePort(input);
@@ -217,6 +239,7 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
     }
 
     private void askForHost() {
+        nonBlockingScanner.clear();
         setCallbackState(UIState.AskForHost);
         out.print("Host? ");
     }
