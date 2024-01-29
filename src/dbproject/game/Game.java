@@ -6,12 +6,12 @@ import java.util.*;
  * represents a Dots and Boxes game.
  */
 public class Game {
-    private String player1;
-    private String player2;
+    private final String player1;
+    private final String player2;
     private int player1Score;
     private int player2Score;
     private String currentPlayer;
-    private Board board;
+    private final Board board;
 
     //@ public instance invariant !gameOver() ==> getValidMoves().length > 0;
     //@ public instance invariant !gameOver() ==> getWinner() == null;
@@ -27,7 +27,8 @@ public class Game {
         player2Score = 0;
     }
 
-    public Game(String player1, String player2, int player1Score, int player2Score, String currentPlayer, Board board) {
+    public Game(String player1, String player2, int player1Score, int player2Score,
+                String currentPlayer, Board board) {
         this.board = board;
         this.player1 = player1;
         this.player2 = player2;
@@ -41,6 +42,18 @@ public class Game {
      *
      * @return a copy of this game.
      */
+    /*@
+        ensures \result != this;
+        ensures \result.player1 == this.player1;
+        ensures \result.player2 == this.player2;
+        ensures \result.player1Score == this.player1Score;
+        ensures \result.player2Score == this.player2Score;
+        ensures \result.currentPlayer == this.currentPlayer;
+        ensures (\forall int i; board.isLine(i) ;
+                \result.board.getLine(i) == this.board.getLine(i));
+        ensures (\forall int i; board.isBox(i) ; \result.board.getBox(i) == this.board.getBox(i));
+        pure
+    */
     public Game deepCopy() {
         Board copiedBoard = board.deepCopy();
         String copiedPlayer1 = player1;
@@ -58,9 +71,10 @@ public class Game {
      * @return the name of player1
      */
     /*@
+        ensures \result == player1;
         pure;
     */
-    public String getPlayer1(){return this.player1;}
+    public String getPlayer1() { return this.player1; }
 
     /**
      * return the name of player2.
@@ -68,24 +82,35 @@ public class Game {
      * @return the name of player2
      */
     /*@
+        ensures \result == player2;
         pure;
     */
-    public String getPlayer2(){return this.player2;}
+    public String getPlayer2() { return this.player2; }
 
     /**
      * return the board of the game.
      *
      * @return the board of the game
      */
-    public Board getBoard(){ return this.board; }
+    /*@
+        ensures \result == board;
+        pure
+    */
+    public Board getBoard() { return this.board; }
 
     /**
      * return the score of player with playerName, or -1 if playerName is not a player of this game.
      *
      * @return the score of playerName, or -1 if playerName is not a player of this game.
      */
-    public int getPlayerScore(String playerName){
-        if(playerName.equals(player1)){
+    /*@
+        ensures playerName.equals(player1) ==> \result == player1Score;
+        ensures playerName.equals(player2) ==> \result == player2Score;
+        ensures !playerName.equals(player1) && ! playerName.equals(player2)==> \result == -1;
+        pure
+    */
+    public int getPlayerScore(String playerName) {
+        if (playerName.equals(player1)) {
             return this.player1Score;
         } else if (playerName.equals(player2)) {
             return this.player2Score;
@@ -115,12 +140,12 @@ public class Game {
         requires gameOver();
         ensures gameOver() && player1Score > player2Score ==> \result == player1;
         ensures gameOver() && player1Score < player2Score ==> \result == player1;
-        ensures gameOver() && player1Score==player2Score ==> \result == null;
+        ensures gameOver() && player1Score == player2Score ==> \result == null;
         ensures !gameOver() ==> \result == null;
         pure
     */
     public String getWinner() {
-        if(gameOver()){
+        if (gameOver()) {
             if (player1Score > player2Score) {
                 return player1;
             } else if (player1Score < player2Score) {
@@ -149,8 +174,9 @@ public class Game {
      * @return the array of currently valid moves
      */
     /*@
-        ensures (\forall int location; Arrays.asList(\result).contains(location) ; isValidMove(location));
-        ensures gameOver() ==> \result == null;
+        ensures (\forall int location; Arrays.asList(\result).contains(location) ;
+                isValidMove(location));
+        ensures gameOver() ==> \result.length == 0;
         pure;
     */
     public int[] getValidMoves() {
@@ -177,8 +203,11 @@ public class Game {
      * @param location the move to check
      * @return true if the move is a valid move
      */
-    //@ ensures \result <==> (\exists int i; Arrays.asList(getValidMoves()).contains(location); i==location);
-    //@ pure;
+    /*@
+        ensures \result <==> (\exists int i; Arrays.asList(getValidMoves()).contains(location);
+                i==location);
+        pure;
+    @*/
     public boolean isValidMove(int location) {
         return !gameOver() && board.isEmptyField(location);
     }
@@ -191,6 +220,14 @@ public class Game {
     /*@
         requires isValidMove(location);
         ensures isValidMove(location) ==> !board.isEmptyField(location);
+        ensures board.isHorizontalLine(location) && board.completeBox(location)[0] != -1 ==>
+            \old(currentPlayer).equals(currentPlayer);
+        ensures board.isHorizontalLine(location) && board.completeBox(location)[1] != -1 ==>
+            \old(currentPlayer).equals(currentPlayer);
+        ensures board.isVerticalLine(location) && board.completeBox(location)[0] != -1 ==>
+            \old(currentPlayer).equals(currentPlayer);
+        ensures board.isVerticalLine(location) && board.completeBox(location)[1] != -1 ==>
+            \old(currentPlayer).equals(currentPlayer);
     */
     public void doMove(int location) {
         if (isValidMove(location)) {
@@ -235,6 +272,9 @@ public class Game {
      *
      * @return the game situation as a String
      */
+    /*@
+        pure;
+    */
     public String toString() {
         return board.toString() + "\n" +
                 "Player, " + Board.ANSI_RED + "playing with number 1, " + Board.ANSI_RESET + player1 + " score = "
