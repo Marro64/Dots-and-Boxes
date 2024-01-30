@@ -63,35 +63,35 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
         this.tuiType = tuiType;
         this.description = description;
         upcomingStates = new LinkedList<>();
-        insertNextState(UIState.AskForHost);
+        insertNextState(UIState.ASK_FOR_HOST);
     }
 
     /**
      * Main TUI loop.
      * <p>
      * Calls the upcoming state when a previous one finishes.
-     * Exits the TUI and stops the client when the next state is {@link UIState#Exit}.
+     * Exits the TUI and stops the client when the next state is {@link UIState#EXIT}.
      */
     public void runTUI() {
         printHelp();
-        while (state != UIState.Exit) {
+        while (state != UIState.EXIT) {
             switch (getNextState()) {
-                case AskForHost -> askForHost();
-                case AskForPort -> askForPort();
-                case Connect -> connect();
-                case ReceivedHello -> receivedHello();
-                case AskForAILevel -> askForAILevel();
-                case AskForUsername -> askForUsername();
-                case ReceivedLogin -> receivedLogin();
-                case ReceivedAlreadyLoggedIn -> receivedAlreadyLoggedIn();
-                case MainMenu -> mainMenu();
-                case ReceivedNewGame -> receivedNewGame();
-                case AskForMove -> askForMove();
-                case ReceivedError -> receivedError();
-                case ReceivedMove -> receivedOpponentMove();
-                case GameOverDisconnected, GameOverVictory, GameOverDraw, GameOverDefeat ->
+                case ASK_FOR_HOST -> askForHost();
+                case ASK_FOR_PORT -> askForPort();
+                case CONNECT -> connect();
+                case RECEIVED_HELLO -> receivedHello();
+                case ASK_FOR_AI_LEVEL -> askForAILevel();
+                case ASK_FOR_USERNAME -> askForUsername();
+                case RECEIVED_LOGIN -> receivedLogin();
+                case RECEIVED_ALREADY_LOGGED_IN -> receivedAlreadyLoggedIn();
+                case MAIN_MENU -> mainMenu();
+                case RECEIVED_NEW_GAME -> receivedNewGame();
+                case ASK_FOR_MOVE -> askForMove();
+                case RECEIVED_ERROR -> receivedError();
+                case RECEIVED_MOVE -> receivedOpponentMove();
+                case GAME_OVER_DISCONNECTED, GAME_OVER_VICTORY, GAME_OVER_DRAW, GAME_OVER_DEFEAT ->
                         receivedGameOver();
-                case Idle -> idle();
+                case IDLE -> idle();
             }
         }
         clearUpcomingStates();
@@ -176,9 +176,9 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
      * Gets the next state in the queue.
      * <p>
      * If there's a new state, sets state attribute and clears the scanner for new input.
-     * Returns {@link UIState#Idle} if there are no upcoming states.
+     * Returns {@link UIState#IDLE} if there are no upcoming states.
      *
-     * @return next state in the queue or {@link UIState#Idle} if there are no upcoming states
+     * @return next state in the queue or {@link UIState#IDLE} if there are no upcoming states
      */
 
     private synchronized UIState getNextState() {
@@ -188,7 +188,7 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
             nonBlockingScanner.clear();
             return state;
         }
-        return UIState.Idle;
+        return UIState.IDLE;
     }
 
     // ########## STATE EXECUTION ##########
@@ -215,7 +215,7 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
      * Callback state.
      */
     private void askForHost() {
-        setCallbackState(UIState.AskForHost);
+        setCallbackState(UIState.ASK_FOR_HOST);
         out.print("Host? (" + REFERENCE + " for " + REFERENCE_IP + ", empty for " + LOCALHOST +
                           "): ");
     }
@@ -226,7 +226,7 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
      * Callback state.
      */
     private void askForPort() {
-        setCallbackState(UIState.AskForPort);
+        setCallbackState(UIState.ASK_FOR_PORT);
         out.print("Port? (empty for " + DEFAULT_PORT + "): ");
     }
 
@@ -236,7 +236,7 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
      * Callback state.
      */
     private void askForAILevel() {
-        setCallbackState(UIState.AskForAILevel);
+        setCallbackState(UIState.ASK_FOR_AI_LEVEL);
         out.print("AI Level (" + NAIVE + " or " + SMART + ")? ");
     }
 
@@ -246,7 +246,7 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
      * Callback state.
      */
     private void askForUsername() {
-        setCallbackState(UIState.AskForUsername);
+        setCallbackState(UIState.ASK_FOR_USERNAME);
         out.print("Username? ");
     }
 
@@ -256,7 +256,7 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
      * Callback state.
      */
     private void mainMenu() {
-        setCallbackState(UIState.MainMenu);
+        setCallbackState(UIState.MAIN_MENU);
         out.print("Press enter to queue for game: ");
     }
 
@@ -266,7 +266,7 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
      * Callback state.
      */
     private void askForMove() {
-        setCallbackState(UIState.AskForMove);
+        setCallbackState(UIState.ASK_FOR_MOVE);
         out.print("Line? (type " + HINT + " for a hint): ");
     }
 
@@ -275,37 +275,37 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
     /**
      * Received hello from server.
      * <p>
-     * If tuiType = {@link TUIType#AI}, adds state {@link UIState#AskForAILevel}
-     * Otherwise, sets player to HumanPlayer and adds state {@link UIState#AskForUsername}
+     * If tuiType = {@link TUIType#AI}, adds state {@link UIState#ASK_FOR_AI_LEVEL}
+     * Otherwise, sets player to HumanPlayer and adds state {@link UIState#ASK_FOR_USERNAME}
      */
     private void receivedHello() {
         out.println("Server description: " + client.getServerDescription());
         if (tuiType == TUIType.AI) {
-            addState(UIState.AskForAILevel);
+            addState(UIState.ASK_FOR_AI_LEVEL);
         } else {
             client.setPlayer(new HumanPlayer(this));
-            addState(UIState.AskForUsername);
+            addState(UIState.ASK_FOR_USERNAME);
         }
     }
 
     /**
      * Received login confirmation from server.
      * <p>
-     * Adds state {@link UIState#MainMenu}
+     * Adds state {@link UIState#MAIN_MENU}
      */
     private void receivedLogin() {
         out.println("Welcome!");
-        addState(UIState.MainMenu);
+        addState(UIState.MAIN_MENU);
     }
 
     /**
      * Received already logged in message from server.
      * <p>
-     * Adds state {@link UIState#AskForUsername}
+     * Adds state {@link UIState#ASK_FOR_USERNAME}
      */
     private void receivedAlreadyLoggedIn() {
         out.println("Username taken.");
-        addState(UIState.AskForUsername);
+        addState(UIState.ASK_FOR_USERNAME);
     }
 
     /**
@@ -333,36 +333,36 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
      * Received game over from server.
      * <p>
      * Prints message depending on game over reason.
-     * Adds state {@link UIState#MainMenu}
+     * Adds state {@link UIState#MAIN_MENU}
      */
     private void receivedGameOver() {
         out.println(client.getGame().toString());
         switch (state) {
-            case GameOverDisconnected:
+            case GAME_OVER_DISCONNECTED:
                 out.println("Opponent Disconnected.");
                 break;
-            case GameOverDraw:
+            case GAME_OVER_DRAW:
                 out.println("Draw!");
                 break;
-            case GameOverVictory:
+            case GAME_OVER_VICTORY:
                 out.println("Victory!");
                 break;
-            case GameOverDefeat:
+            case GAME_OVER_DEFEAT:
                 out.println("Defeat!");
                 break;
         }
         clearUpcomingStates();
-        addState(UIState.MainMenu);
+        addState(UIState.MAIN_MENU);
     }
 
     /**
      * Received error message from server.
      * <p>
-     * Adds state {@link UIState#ReceivedError} to cleanly exit.
+     * Adds state {@link UIState#RECEIVED_ERROR} to cleanly exit.
      */
     private void receivedError() {
         out.println("An error occurred.");
-        addState(UIState.Exit);
+        addState(UIState.EXIT);
     }
 
     // ----- MISC -----
@@ -371,7 +371,7 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
      * Attempts to connect to a server, using fields host and port.
      * <p>
      * On success, sends hello to server.
-     * On failure, adds state {@link UIState#AskForHost}
+     * On failure, adds state {@link UIState#ASK_FOR_HOST}
      */
     private void connect() {
         try {
@@ -380,7 +380,7 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
             client.addListener(this);
         } catch (IOException e) {
             out.println("Failed to connect.");
-            addState(UIState.AskForHost);
+            addState(UIState.ASK_FOR_HOST);
             return;
         }
         client.sendHello(description);
@@ -415,16 +415,16 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
             printHelp();
             returnToCallbackState();
         } else if (input.equalsIgnoreCase(EXIT)) {
-            insertNextState(UIState.Exit);
+            insertNextState(UIState.EXIT);
             returnToCallbackState();
         } else if (callbackState != null) {
             switch (callbackState) {
-                case AskForHost -> receiveHost(input);
-                case AskForPort -> receivePort(input);
-                case AskForAILevel -> receiveAILevel(input);
-                case AskForUsername -> receiveUsername(input);
-                case MainMenu -> receiveMainMenuCommand(input);
-                case AskForMove -> receiveMove(input);
+                case ASK_FOR_HOST -> receiveHost(input);
+                case ASK_FOR_PORT -> receivePort(input);
+                case ASK_FOR_AI_LEVEL -> receiveAILevel(input);
+                case ASK_FOR_USERNAME -> receiveUsername(input);
+                case MAIN_MENU -> receiveMainMenuCommand(input);
+                case ASK_FOR_MOVE -> receiveMove(input);
             }
         }
     }
@@ -434,8 +434,8 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
      * If input is valid, sets global host field to InetAddress of input.
      * If input is REFERENCE or its first letter, input is replaced by REFERENCE_IP.
      * If input is blank, input is replaced by localhost.
-     * Also, if input is valid, adds state {@link UIState#AskForPort}.
-     * Otherwise, adds state {@link UIState#AskForHost}
+     * Also, if input is valid, adds state {@link UIState#ASK_FOR_PORT}.
+     * Otherwise, adds state {@link UIState#ASK_FOR_HOST}
      *
      * @param input User input to parse.
      */
@@ -455,10 +455,10 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
             host = InetAddress.getByName(hostName);
         } catch (UnknownHostException ignore) {
             out.println("Invalid host.");
-            addState(UIState.AskForHost);
+            addState(UIState.ASK_FOR_HOST);
             return;
         }
-        addState(UIState.AskForPort);
+        addState(UIState.ASK_FOR_PORT);
     }
 
     /**
@@ -466,8 +466,8 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
      * <p>
      * If input is empty, sets global field port to DEFAULT_PORT.
      * If input is valid int, sets global field port to this number.
-     * Also, if input is valid, adds state {@link UIState#Connect}
-     * Otherwise, adds state {@link UIState#AskForPort}
+     * Also, if input is valid, adds state {@link UIState#CONNECT}
+     * Otherwise, adds state {@link UIState#ASK_FOR_PORT}
      *
      * @param input User input to parse.
      */
@@ -485,11 +485,11 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
             }
         } catch (NumberFormatException | InputMismatchException ignore) {
             out.println("Invalid port.");
-            addState(UIState.AskForPort);
+            addState(UIState.ASK_FOR_PORT);
             return;
         }
         this.port = inputPort;
-        addState(UIState.Connect);
+        addState(UIState.CONNECT);
     }
 
     /**
@@ -497,8 +497,8 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
      * <p>
      * If input matches naive, sets client player to {@link AIPlayer} with {@link NaiveStrategy}.
      * If input matches smart, adds state {@link AIPlayer} with {@link NaiveStrategy}.
-     * Also, if input is valid, adds state {@link UIState#AskForUsername}.
-     * Otherwise, adds state {@link UIState#AskForAILevel}.
+     * Also, if input is valid, adds state {@link UIState#ASK_FOR_USERNAME}.
+     * Otherwise, adds state {@link UIState#ASK_FOR_AI_LEVEL}.
      *
      * @param input User input to parse.
      */
@@ -511,18 +511,18 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
             strategy = new SmartStrategy();
         } else {
             out.println("Invalid player type.");
-            addState(UIState.AskForAILevel);
+            addState(UIState.ASK_FOR_AI_LEVEL);
             return;
         }
         client.setPlayer(new AIPlayer(strategy));
-        addState(UIState.AskForUsername);
+        addState(UIState.ASK_FOR_USERNAME);
     }
 
     /**
      * Parse user input for username.
      * <p>
      * If username is correct, sends login with username to server.
-     * Otherwise, adds state {@link UIState#AskForUsername}
+     * Otherwise, adds state {@link UIState#ASK_FOR_USERNAME}
      *
      * @param input User input to parse.
      */
@@ -530,7 +530,7 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
         clearCallbackState();
         if (input.isBlank() || input.contains(Protocol.SEPARATOR)) {
             out.println("Invalid username.");
-            addState(UIState.AskForUsername);
+            addState(UIState.ASK_FOR_USERNAME);
             return;
         }
         client.sendLogin(input);
@@ -540,7 +540,7 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
      * Parse user input for main menu.
      * <p>
      * If input is empty, send queue entry to server.
-     * Otherwise, adds state {@link UIState#MainMenu}
+     * Otherwise, adds state {@link UIState#MAIN_MENU}
      *
      * @param input User input to parse.
      */
@@ -551,16 +551,16 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
             out.println("Waiting for new game...");
         } else {
             out.println("Invalid command.");
-            addState(UIState.MainMenu);
+            addState(UIState.MAIN_MENU);
         }
     }
 
     /**
      * Parse user input for move.
      * <p>
-     * If input starts with h, display hint and add state {@link UIState#AskForMove}
+     * If input starts with h, display hint and add state {@link UIState#ASK_FOR_MOVE}
      * Otherwise, attempt to parse input as move and send to server.
-     * If an exception occurs, add state {@link UIState#AskForMove}
+     * If an exception occurs, add state {@link UIState#ASK_FOR_MOVE}
      *
      * @param input User input to parse.
      */
@@ -569,14 +569,14 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
         try {
             if (input.toUpperCase().startsWith(HINT.substring(0, 1).toUpperCase())) {
                 displayHint();
-                addState(UIState.AskForMove);
+                addState(UIState.ASK_FOR_MOVE);
             } else {
                 int location = Integer.parseInt(input);
                 client.sendMove(location);
             }
         } catch (IllegalArgumentException | IllegalMoveException ignore) {
             out.println("Invalid move.");
-            addState(UIState.AskForMove);
+            addState(UIState.ASK_FOR_MOVE);
         }
     }
 
@@ -584,39 +584,39 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
 
     /**
      * Called when connection is lost.
-     * Adds state {@link UIState#Exit}
+     * Adds state {@link UIState#EXIT}
      */
     @Override
     public void connectionLost() {
         out.println("Connection lost.");
-        insertNextState(UIState.Exit);
+        insertNextState(UIState.EXIT);
     }
 
     /**
      * Called when a login confirmation is received.
-     * Adds state {@link UIState#ReceivedLogin}
+     * Adds state {@link UIState#RECEIVED_LOGIN}
      */
     @Override
     public void loginConfirmation() {
-        addState(UIState.ReceivedLogin);
+        addState(UIState.RECEIVED_LOGIN);
     }
 
     /**
      * Called when an already logged in message is received.
-     * Adds state {@link UIState#ReceivedAlreadyLoggedIn}
+     * Adds state {@link UIState#RECEIVED_ALREADY_LOGGED_IN}
      */
     @Override
     public void alreadyLoggedIn() {
-        addState(UIState.ReceivedAlreadyLoggedIn);
+        addState(UIState.RECEIVED_ALREADY_LOGGED_IN);
     }
 
     /**
      * Called when a hello message is received.
-     * Adds state {@link UIState#ReceivedHello}
+     * Adds state {@link UIState#RECEIVED_HELLO}
      */
     @Override
     public void serverHello() {
-        addState(UIState.ReceivedHello);
+        addState(UIState.RECEIVED_HELLO);
     }
 
     /**
@@ -637,38 +637,38 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
 
     /**
      * Called when a new game message is received.
-     * Adds state {@link UIState#ReceivedNewGame}
+     * Adds state {@link UIState#RECEIVED_NEW_GAME}
      */
     @Override
     public void newGame() {
-        addState(UIState.ReceivedNewGame);
+        addState(UIState.RECEIVED_NEW_GAME);
     }
 
     /**
      * Called when a move is received.
-     * Adds state {@link UIState#ReceivedMove}
+     * Adds state {@link UIState#RECEIVED_MOVE}
      *
      * @param location Location of the received move
      */
     @Override
     public void receiveMove(int location) {
-        addState(UIState.ReceivedMove);
+        addState(UIState.RECEIVED_MOVE);
     }
 
     /**
      * Called when an error message is received.
-     * Adds state {@link UIState#ReceivedError}
+     * Adds state {@link UIState#RECEIVED_ERROR}
      */
     @Override
     public void receiveError() {
-        addState(UIState.ReceivedError);
+        addState(UIState.RECEIVED_ERROR);
     }
 
     /**
      * Called when a game over message is received.
-     * Depending on reason and winner, adds state {@link UIState#GameOverVictory},
-     * {@link UIState#GameOverDefeat}, {@link UIState#GameOverDraw}
-     * or {@link UIState#GameOverDisconnected}.
+     * Depending on reason and winner, adds state {@link UIState#GAME_OVER_VICTORY},
+     * {@link UIState#GAME_OVER_DEFEAT}, {@link UIState#GAME_OVER_DRAW}
+     * or {@link UIState#GAME_OVER_DISCONNECTED}.
      *
      * @param reason Reason for winning, either {@link Protocol@VICTORY},
      *               {@link Protocol@DRAW}, or {@link Protocol@DISCONNECT}
@@ -679,16 +679,16 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
         out.println(client.getGame().toString());
         switch (reason) {
             case DISCONNECT:
-                insertNextState(UIState.GameOverDisconnected);
+                insertNextState(UIState.GAME_OVER_DISCONNECTED);
                 break;
             case DRAW:
-                insertNextState(UIState.GameOverDraw);
+                insertNextState(UIState.GAME_OVER_DRAW);
                 break;
             case VICTORY:
                 if (winner.equals(client.getUsername())) {
-                    insertNextState(UIState.GameOverVictory);
+                    insertNextState(UIState.GAME_OVER_VICTORY);
                 } else {
-                    insertNextState(UIState.GameOverDefeat);
+                    insertNextState(UIState.GAME_OVER_DEFEAT);
                 }
                 break;
         }
@@ -698,11 +698,11 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
 
     /**
      * Called when an interface should request a move.
-     * Adds state {@link UIState#AskForMove}
+     * Adds state {@link UIState#ASK_FOR_MOVE}
      */
     @Override
     public void requestMove() {
-        addState(UIState.AskForMove);
+        addState(UIState.ASK_FOR_MOVE);
     }
 
     // ########## MISC ##########
@@ -753,6 +753,11 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
         out.println();
     }
 
+    /**
+     * Instantiates a ClientTUI with the TUIType AI.
+     *
+     * @param args Unused
+     */
     public static void main(String[] args) {
         new ClientTUI(System.in, System.out, TUIType.HUMAN, "Minor-2's Client").runTUI();
     }

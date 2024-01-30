@@ -14,14 +14,8 @@ public class Protocol {
     public static final String DISCONNECT = "DISCONNECT";
     public static final String VICTORY = "VICTORY";
     public static final String DRAW = "DRAW";
-    public static final String NAMEDQUEUES = "NAMEDQUEUES";
-    public static final String NOISE = "NOISE";
-    public static final String RANK = "RANK";
-    public static final String CHAT = "CHAT";
-    public static final String CHALLENGE = "challenge";
 
     private Protocol() {
-        // Private constructor to prevent instantiation
-        // Is it plagiarism to copy something like this from the assignments?
+        // Private constructor to prevent instantiation, like used in the assignments.
     }
 }

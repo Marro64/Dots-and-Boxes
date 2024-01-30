@@ -5,10 +5,10 @@ import dbproject.game.Game;
 /**
  * AI player of a Dots and Boxes game.
  */
-public class AIPlayer extends Player{
+public class AIPlayer extends Player {
     private Strategy strategy;
 
-    public AIPlayer(Strategy strategy){
+    public AIPlayer(Strategy strategy) {
         this.strategy = strategy;
     }
 
@@ -20,7 +20,9 @@ public class AIPlayer extends Player{
     /*@
         pure
     */
-    public Strategy getStrategy(){return this.strategy;}
+    public Strategy getStrategy() {
+        return this.strategy;
+    }
 
     /**
      * set the strategy of this AIPlayer to 'strategy'.
@@ -30,7 +32,10 @@ public class AIPlayer extends Player{
     /*@
         ensures getStrategy() == strategy;
     */
-    public void setStrategy(Strategy strategy){this.strategy = strategy;}
+    public void setStrategy(Strategy strategy) {
+        this.strategy = strategy;
+    }
+
     /**
      * Determines the next move, if the game still has available moves.
      *

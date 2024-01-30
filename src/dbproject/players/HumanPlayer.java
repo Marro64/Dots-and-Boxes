@@ -8,6 +8,7 @@ import dbproject.game.Game;
  */
 public class HumanPlayer extends Player {
     private final ClientMoveInput input;
+
     public HumanPlayer(ClientMoveInput input) {
         this.input = input;
     }

@@ -4,23 +4,8 @@ package dbproject.client;
  * A list of states that can be used by a UI.
  */
 public enum UIState {
-    AskForHost,
-    AskForPort,
-    Connect,
-    ReceivedHello,
-    AskForAILevel,
-    AskForUsername,
-    ReceivedLogin,
-    ReceivedAlreadyLoggedIn,
-    MainMenu,
-    ReceivedNewGame,
-    AskForMove,
-    ReceivedError,
-    ReceivedMove,
-    GameOverDisconnected,
-    GameOverVictory,
-    GameOverDraw,
-    GameOverDefeat,
-    Idle,
-    Exit
+    ASK_FOR_HOST, ASK_FOR_PORT, CONNECT, RECEIVED_HELLO, ASK_FOR_AI_LEVEL, ASK_FOR_USERNAME,
+    RECEIVED_LOGIN, RECEIVED_ALREADY_LOGGED_IN, MAIN_MENU, RECEIVED_NEW_GAME, ASK_FOR_MOVE,
+    RECEIVED_ERROR, RECEIVED_MOVE, GAME_OVER_DISCONNECTED, GAME_OVER_VICTORY, GAME_OVER_DRAW,
+    GAME_OVER_DEFEAT, IDLE, EXIT
 }
