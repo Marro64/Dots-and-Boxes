@@ -145,7 +145,7 @@ public class ServerClientHandler {
      * @param location that is included in the move message
      */
     public synchronized void receiveMove(int location) {
-        System.out.println("ch: Move from client " + username + " received for location "+ location);
+        //System.out.println("ch: Move from client " + username + " received for location "+ location); //debug
         if(serverGameManager == null){
             sendError();
             return;

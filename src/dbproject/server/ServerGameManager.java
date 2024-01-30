@@ -28,14 +28,14 @@ public class ServerGameManager {
      * @param location of the move
      */
     public synchronized void handleMove(ServerClientHandler player, int location) {
-        System.out.println("GM : handle move for client " + player.getUsername());
+        //System.out.println("GM : handle move for client " + player.getUsername()); //debug
         if (game.gameOver()) {
             //the client tried to send a move, while the game is over
             player.sendError();
         }
         if (game.getTurn().equals(player.getUsername())) {
             game.doMove(location);
-            System.out.println("GM : move done for client " + player.getUsername());
+            //System.out.println("GM : move done for client " + player.getUsername()); //debug
             player1.sendMove(location);
             player2.sendMove(location);
             //check if the move results in a game over
