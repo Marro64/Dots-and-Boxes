@@ -153,6 +153,7 @@ public class Server extends SocketServer {
             port = sc.nextInt();
         }
         Server server = new Server(port);
+        System.out.println("waiting for clients to connect");
         server.acceptConnections();
     }
 }
