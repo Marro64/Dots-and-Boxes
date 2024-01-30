@@ -8,7 +8,6 @@ public enum UIState {
     AskForPort,
     Connect,
     ReceivedHello,
-    AskForPlayerType,
     AskForAILevel,
     AskForUsername,
     ReceivedLogin,

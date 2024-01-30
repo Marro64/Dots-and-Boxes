@@ -20,6 +20,10 @@ import java.util.LinkedList;
  * A TUI for the clients of a Dots n Boxes game.
  */
 public class ClientTUI implements ClientListener, ClientMoveInput {
+    public enum TUIType {
+        HUMAN, AI
+    }
+
     private static final String LIST = "list";
     private static final String HINT = "hint";
     private static final String HELP = "help";
@@ -28,15 +32,13 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
     private static final String REFERENCE_IP = "130.89.253.64";
     private static final String LOCALHOST = "localhost";
     private static final int DEFAULT_PORT = 4567;
-    private static final String HUMAN = "Human";
-    private static final String AI = "AI";
-    private static final String NAIVE = "Novice";
+    private static final String NAIVE = "Naive";
     private static final String SMART = "Smart";
-    private static final String CLIENT_DESCRIPTION = "Minor 2's Client";
     private static final int POLLING_INTERVAL = 50;
-
     private final NonBlockingScanner nonBlockingScanner;
     private final PrintStream out;
+    private final TUIType tuiType;
+    private final String description;
     private Client client;
     private UIState callbackState;
     private UIState state;
@@ -55,9 +57,11 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
      * @param in  InputStream to use
      * @param out OutputStream to use
      */
-    public ClientTUI(InputStream in, OutputStream out) {
+    public ClientTUI(InputStream in, OutputStream out, TUIType tuiType, String description) {
         this.nonBlockingScanner = new NonBlockingScanner(in);
         this.out = new PrintStream(out);
+        this.tuiType = tuiType;
+        this.description = description;
         upcomingStates = new LinkedList<>();
         insertNextState(UIState.AskForHost);
     }
@@ -76,7 +80,6 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
                 case AskForPort -> askForPort();
                 case Connect -> connect();
                 case ReceivedHello -> receivedHello();
-                case AskForPlayerType -> askForPlayerType();
                 case AskForAILevel -> askForAILevel();
                 case AskForUsername -> askForUsername();
                 case ReceivedLogin -> receivedLogin();
@@ -228,23 +231,13 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
     }
 
     /**
-     * Ask for player type.
-     * <p>
-     * Callback state.
-     */
-    private void askForPlayerType() {
-        setCallbackState(UIState.AskForPlayerType);
-        out.print(AI + " or " + HUMAN + " player? ");
-    }
-
-    /**
      * Ask for AI level.
      * <p>
      * Callback state.
      */
     private void askForAILevel() {
         setCallbackState(UIState.AskForAILevel);
-        out.print("AI Level ([N]aive or [S]mart)? ");
+        out.print("AI Level (" + NAIVE + " or " + SMART + ")? ");
     }
 
     /**
@@ -274,7 +267,7 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
      */
     private void askForMove() {
         setCallbackState(UIState.AskForMove);
-        out.print("Line? (" + HINT + " for hint): ");
+        out.print("Line? (type " + HINT + " for a hint): ");
     }
 
     // ----- RECEIVE FROM SERVER -----
@@ -282,11 +275,17 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
     /**
      * Received hello from server.
      * <p>
-     * Adds state {@link UIState#AskForPlayerType}
+     * If tuiType = {@link TUIType#AI}, adds state {@link UIState#AskForAILevel}
+     * Otherwise, sets player to HumanPlayer and adds state {@link UIState#AskForUsername}
      */
     private void receivedHello() {
         out.println("Server description: " + client.getServerDescription());
-        addState(UIState.AskForPlayerType);
+        if (tuiType == TUIType.AI) {
+            addState(UIState.AskForAILevel);
+        } else {
+            client.setPlayer(new HumanPlayer(this));
+            addState(UIState.AskForUsername);
+        }
     }
 
     /**
@@ -384,7 +383,7 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
             addState(UIState.AskForHost);
             return;
         }
-        client.sendHello(CLIENT_DESCRIPTION);
+        client.sendHello(description);
     }
 
     // ########## Receive User Input ##########
@@ -422,7 +421,6 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
             switch (callbackState) {
                 case AskForHost -> receiveHost(input);
                 case AskForPort -> receivePort(input);
-                case AskForPlayerType -> receivePlayerType(input);
                 case AskForAILevel -> receiveAILevel(input);
                 case AskForUsername -> receiveUsername(input);
                 case MainMenu -> receiveMainMenuCommand(input);
@@ -492,29 +490,6 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
         }
         this.port = inputPort;
         addState(UIState.Connect);
-    }
-
-    /**
-     * Parse user input for player type.
-     * <p>
-     * If input matches human, sets client player to {@link HumanPlayer}
-     * and adds state {@link UIState#AskForUsername}
-     * If input matches AI, adds state {@link UIState#AskForAILevel}
-     * Otherwise, adds state {@link UIState#AskForPlayerType}
-     *
-     * @param input User input to parse.
-     */
-    private void receivePlayerType(String input) {
-        clearCallbackState();
-        if (input.toUpperCase().startsWith(HUMAN.substring(0, 1).toUpperCase())) {
-            client.setPlayer(new HumanPlayer(this));
-            addState(UIState.AskForUsername);
-        } else if (input.toUpperCase().startsWith(AI.substring(0, 1).toUpperCase())) {
-            addState(UIState.AskForAILevel);
-        } else {
-            out.println("Invalid player type.");
-            addState(UIState.AskForPlayerType);
-        }
     }
 
     /**
@@ -756,23 +731,29 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
 
     /**
      * Prints information about using the client.
+     * Only prints game rules and information about making moves if tuiType = {@link TUIType#HUMAN}
      */
     private void printHelp() {
+        out.println(description);
         out.println("Dots and Boxes game");
         out.println("At any point, type " + HELP + " to see this message " + "and " + EXIT +
                             " to exit the game.");
         out.println(
                 "Once you're logged in, at any point type " + LIST + " to see a list of players.");
-        out.println("The aim of the game is to get as many points. " +
-                            "Complete the 4th side of a box to get a point.");
-        out.println("When asked for a move, type a number to put a line at that location.");
-        out.println("If this line completes a box, you get a point and another turn! " +
-                            "Otherwise, it's the opponents turn.");
-        out.println("The game ends when the board is full. The player with the most points wins.");
+        if (tuiType == TUIType.HUMAN) {
+            out.println("The aim of the game is to get as many points. " +
+                                "Complete the 4th side of a box to get a point.");
+            out.println("When asked for a move, type a number to put a line at that location, " +
+                                "or type " + HINT + " for a hint.");
+            out.println("If this line completes a box, you get a point and another turn! " +
+                                "Otherwise, it's the opponents turn.");
+            out.println(
+                    "The game ends when the board is full. The player with the most points wins.");
+        }
         out.println();
     }
 
     public static void main(String[] args) {
-        new ClientTUI(System.in, System.out).runTUI();
+        new ClientTUI(System.in, System.out, TUIType.HUMAN, "Minor-2's Client").runTUI();
     }
 }
