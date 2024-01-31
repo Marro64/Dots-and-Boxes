@@ -18,6 +18,12 @@ public class Game {
     //@ public instance invariant !gameOver() ==> getTurn() != null;
 
     // -- Constructors -----------------------------------------------
+
+    /**
+     * instantiate game with two players.
+     * @param player1 name of player1
+     * @param player2 name of player2
+     */
     public Game(String player1, String player2) {
         this.board = new Board();
         this.player1 = player1;
@@ -27,6 +33,15 @@ public class Game {
         player2Score = 0;
     }
 
+    /**
+     * instantiate game with two players, their scores, current player and the board.
+     * @param player1 name of player1
+     * @param player2 name of player2
+     * @param player1Score score of player1
+     * @param player2Score score of player2
+     * @param currentPlayer name of the current player
+     * @param board of the game
+     */
     public Game(String player1, String player2, int player1Score, int player2Score,
                 String currentPlayer, Board board) {
         this.board = board;
@@ -101,6 +116,7 @@ public class Game {
     /**
      * return the score of player with playerName, or -1 if playerName is not a player of this game.
      *
+     * @param playerName name of the player to get the score from
      * @return the score of playerName, or -1 if playerName is not a player of this game.
      */
     /*@

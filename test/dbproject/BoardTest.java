@@ -461,5 +461,6 @@ public class BoardTest {
         assertTrue(board.toString().contains(Board.ANSI_RED + "___" + Board.ANSI_RESET));
         assertTrue(board.toString().contains(Board.ANSI_RED + "1" + Board.ANSI_RESET));
         assertTrue(board.toString().contains(Board.ANSI_BLUE + "|" + Board.ANSI_RESET+ " "));
+        assertTrue(board.toString().contains(".     ."));
     }
 }

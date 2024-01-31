@@ -259,6 +259,9 @@ public class GameTest {
         assertTrue(game.gameOver());
     }
 
+    /**
+     * test toString method of Game.
+     */
     @Test
     public void testToString() {
         assertTrue(game.toString().contains(player1Name));
