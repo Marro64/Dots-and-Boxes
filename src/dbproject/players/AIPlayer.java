@@ -9,7 +9,7 @@ public class AIPlayer extends Player {
     private final Strategy strategy;
 
     /**
-     * Instantiates a new AIPlayer with given {@link Strategy}
+     * Instantiates a new AIPlayer with given {@link Strategy}.
      *
      * @param strategy Strategy for new AIPlayer to use
      */
