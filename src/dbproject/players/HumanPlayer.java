@@ -9,6 +9,11 @@ import dbproject.game.Game;
 public class HumanPlayer extends Player {
     private final ClientMoveInput input;
 
+    /**
+     * Instantiates a {@link HumanPlayer} with a {@link ClientMoveInput} to send a move request to.
+     *
+     * @param input {@link ClientMoveInput} to send move request to.
+     */
     public HumanPlayer(ClientMoveInput input) {
         this.input = input;
     }

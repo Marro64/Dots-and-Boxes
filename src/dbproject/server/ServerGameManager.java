@@ -40,7 +40,7 @@ public class ServerGameManager {
             if (game.gameOver()) {
                 if (game.getWinner() != null) {
                     //there is a winner of the game
-                    System.out.println("GameOver Victory" + game.getWinner());
+                    System.out.println("GameOver Victory " + game.getWinner());
                     player1.gameOver(Protocol.VICTORY, game.getWinner());
                     player2.gameOver(Protocol.VICTORY, game.getWinner());
                 } else {

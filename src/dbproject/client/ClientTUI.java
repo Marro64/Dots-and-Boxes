@@ -57,6 +57,8 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
      *
      * @param in  InputStream to use
      * @param out OutputStream to use
+     * @param tuiType Type of player to create, human or AI
+     * @param description Client description to send to server
      */
     public ClientTUI(InputStream in, OutputStream out, TUIType tuiType, String description) {
         this.nonBlockingScanner = new NonBlockingScanner(in);
@@ -144,7 +146,7 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
      *
      * @param state The state that is currently requesting input.
      */
-    private synchronized void setCallbackState(UIState state) {
+    private void setCallbackState(UIState state) {
         //System.out.println("ClientTUI.setCallbackState: " + state); // debug
         callbackState = state;
     }
@@ -154,7 +156,7 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
      *
      * @see dbproject.client.ClientTUI#setCallbackState(UIState)
      */
-    private synchronized void clearCallbackState() {
+    private void clearCallbackState() {
         //System.out.println("ClientTUI.clearCallbackState"); // debug
         callbackState = null;
     }
@@ -202,8 +204,8 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
      */
     private synchronized void idle() {
         try {
-            wait(POLLING_INTERVAL);
             readUserInput();
+            wait(POLLING_INTERVAL);
         } catch (InterruptedException ignore) {
         }
     }
@@ -671,9 +673,9 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
      * {@link UIState#GAME_OVER_DEFEAT}, {@link UIState#GAME_OVER_DRAW}
      * or {@link UIState#GAME_OVER_DISCONNECTED}.
      *
-     * @param reason Reason for winning, either {@link Protocol@VICTORY},
-     *               {@link Protocol@DRAW}, or {@link Protocol@DISCONNECT}
-     * @param winner Username of winner, null if reason is {@link Protocol@DRAW}
+     * @param reason Reason for winning, either {@link Protocol#VICTORY},
+     *               {@link Protocol#DRAW}, or {@link Protocol#DISCONNECT}
+     * @param winner Username of winner, null if reason is {@link Protocol#DRAW}
      */
     @Override
     public void gameOver(String reason, String winner) {

@@ -25,23 +25,24 @@ class NonBlockingScanner {
     /**
      * Attempt to read a line from the input.
      * <p>
-     * Returns null if there is no line ready or if an internal error occurred.
+     * Returns null if there is no line ready.
      *
      * @return A line from the input or null
      */
     protected String readLine() {
         update();
+
         int endOfLine = buffer.indexOf("\n");
+
+        // If there is no new line available, return.
         if (endOfLine == -1) {
             return null;
         }
+
+        // Return the new line and remove it from the buffer
         String line;
-        try {
-            line = buffer.substring(0, endOfLine);
-            buffer.delete(0, endOfLine + 1);
-        } catch (IndexOutOfBoundsException ignore) {
-            return null;
-        }
+        line = buffer.substring(0, endOfLine);
+        buffer.delete(0, endOfLine + 1);
         return line.trim();
     }
 

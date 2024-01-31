@@ -6,33 +6,14 @@ import dbproject.game.Game;
  * AI player of a Dots and Boxes game.
  */
 public class AIPlayer extends Player {
-    private Strategy strategy;
+    private final Strategy strategy;
 
+    /**
+     * Instantiates a new AIPlayer with given {@link Strategy}
+     *
+     * @param strategy Strategy for new AIPlayer to use
+     */
     public AIPlayer(Strategy strategy) {
-        this.strategy = strategy;
-    }
-
-    /**
-     * returns the strategy of the AIPlayer.
-     *
-     * @return the strategy of the AIPlayer
-     */
-    /*@
-        pure
-    */
-    public Strategy getStrategy() {
-        return this.strategy;
-    }
-
-    /**
-     * set the strategy of this AIPlayer to 'strategy'.
-     *
-     * @param strategy to set the player's strategy to
-     */
-    /*@
-        ensures getStrategy() == strategy;
-    */
-    public void setStrategy(Strategy strategy) {
         this.strategy = strategy;
     }
 

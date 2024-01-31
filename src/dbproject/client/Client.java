@@ -44,6 +44,8 @@ public class Client {
 
     /**
      * Adds a listener.
+     *
+     * @param listener Listener to add
      */
     public void addListener(ClientListener listener) {
         clientListeners.add(listener);
@@ -51,6 +53,8 @@ public class Client {
 
     /**
      * Removes a listener.
+     *
+     * @param listener Listener to remove
      */
     public void removeListener(ClientListener listener) {
         clientListeners.remove(listener);
@@ -67,6 +71,8 @@ public class Client {
 
     /**
      * Sends hello message to server.
+     *
+     * @param clientDescription Description of client to send to server
      */
     public void sendHello(String clientDescription) {
         clientConnection.sendHello(clientDescription);
@@ -181,7 +187,7 @@ public class Client {
      * @param location Location of move.
      */
     public void receiveMove(int location) {
-        System.out.println("client.receiveMove: " + location);
+//        System.out.println("client.receiveMove: " + location); // debug
         game.doMove(location);
         for (ClientListener clientListener : clientListeners) {
             clientListener.receiveMove(location);
@@ -196,7 +202,7 @@ public class Client {
      * If player returns >= 0, send returned value as move.
      */
     private void askForMove() {
-        System.out.println("client.askForMove"); // debug
+//        System.out.println("client.askForMove"); // debug
         int responseMove = player.determineMove(game);
         if (responseMove >= 0) {
             try {
@@ -211,9 +217,9 @@ public class Client {
     /**
      * Pass game over message to listeners.
      *
-     * @param reason Reason for winning, either {@link Protocol @VICTORY},
-     *               {@link Protocol@DRAW}, or {@link Protocol@DISCONNECT}
-     * @param winner Username of winner, null if reason is {@link Protocol@DRAW}
+     * @param reason Reason for winning, either {@link Protocol#VICTORY},
+     *               {@link Protocol#DRAW}, or {@link Protocol#DISCONNECT}
+     * @param winner Username of winner, null if reason is {@link Protocol#DRAW}
      */
     public void receiveGameOver(String reason, String winner) {
         for (ClientListener clientListener : clientListeners) {

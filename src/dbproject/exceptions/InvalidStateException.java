@@ -6,6 +6,8 @@ package dbproject.exceptions;
 public class InvalidStateException extends Exception {
     /**
      * Instantiates an InvalidStateException with a message.
+     *
+     * @param message Message to include
      */
     public InvalidStateException(String message) {
         super(message);

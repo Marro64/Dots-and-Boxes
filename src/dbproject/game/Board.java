@@ -65,6 +65,8 @@ public class Board {
 
     /**
      * Creates a deep copy of this board.
+     *
+     * @return Copy of board
      */
     /*@
         ensures \result != this;
@@ -85,6 +87,8 @@ public class Board {
      * Calculates the index in the linear array of lines from a horizontal line represented
      * by (row, col) pair.
      *
+     * @param row row index of horizontal line
+     * @param col column index of horizontal line
      * @return the line index belonging to the horizontal (row,col)-line
      */
     /*@
@@ -107,6 +111,8 @@ public class Board {
      * Calculates the index in the linear array of lines from a vertical line represented
      * by (row, col) pair.
      *
+     * @param row row index of vertical line
+     * @param col column index of vertical line
      * @return the line index belonging to the vertical (row,col)-line
      */
     /*@
@@ -176,7 +182,8 @@ public class Board {
     /**
      * Returns true if location is a valid index of a line on the board.
      *
-     * @return true if 0 <= location < (DIM-1)*DIM + (DIM-1)*DIM
+     * @param location index of line to check
+     * @return true if 0 &lt;= location &lt; (DIM-1)*DIM + (DIM-1)*DIM
      */
     //@ ensures location >= 0 && location < (DIM-1)*DIM + (DIM-1)*DIM ==> \result == true;
     //@ pure;
@@ -187,6 +194,7 @@ public class Board {
     /**
      * Returns true if location is a valid index of a horizontal line on the board.
      *
+     * @param location index of line to check
      * @return true if line is horizontal
      */
     /*@
@@ -210,6 +218,7 @@ public class Board {
     /**
      * Returns true if location is a valid location of a vertical line on the board.
      *
+     * @param location index of line to check
      * @return true if line is vertical
      */
     /*@
@@ -233,7 +242,8 @@ public class Board {
     /**
      * Returns true if location is a valid index of a box on the board.
      *
-     * @return true if 0 <= location < (DIM-1)*(DIM-1)
+     * @param location index of box to check
+     * @return true if 0 &lt;= location &lt; (DIM-1)*(DIM-1)
      */
     /*@
         ensures location >= 0 && location < (DIM-1)*(DIM-1) ==> \result == true;
@@ -246,7 +256,9 @@ public class Board {
     /**
      * Returns true if location is a valid index of a box represented by (row, column) on the board.
      *
-     * @return true if 0 <= row < (DIM-1) && 0 <= column < (DIM-1)
+     * @param row row index of box
+     * @param column column index of box
+     * @return true if 0 &lt;= row &lt; (DIM-1) &amp;&amp; 0 &lt;= column &lt; (DIM-1)
      */
     /*@
         ensures row >= 0 && row < (DIM-1) && column >= 0 && column < (DIM-1) ==> \result == true;
@@ -389,6 +401,7 @@ public class Board {
      * Sets the content of line location to playerNumber.
      *
      * @param location the line number (see NUMBERING)
+     * @param playerNumber the player that set the line
      */
     /*@
         requires isLine(location);
@@ -405,6 +418,7 @@ public class Board {
      * Sets the content of box location to playerNumber.
      *
      * @param location the box number
+     * @param playerNumber player that completed the box
      */
     /*@
         requires isBox(location);

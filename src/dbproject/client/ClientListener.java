@@ -53,9 +53,9 @@ public interface ClientListener {
     /**
      * Called when a game over message is received.
      *
-     * @param reason Reason for winning, either {@link Protocol@VICTORY},
-     * {@link Protocol@DRAW}, or {@link Protocol@DISCONNECT}
-     * @param winner Username of winner, null if reason is {@link Protocol@DRAW}
+     * @param reason Reason for winning, either {@link Protocol#VICTORY},
+     * {@link Protocol#DRAW}, or {@link Protocol#DISCONNECT}
+     * @param winner Username of winner, null if reason is {@link Protocol#DRAW}
      */
     void gameOver(String reason, String winner);
 }
