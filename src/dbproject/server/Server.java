@@ -146,11 +146,11 @@ public class Server extends SocketServer {
     public static void main(String[] args) throws IOException {
         int port = -1;
         do {
-            try{
+            try {
                 System.out.print("Input port number: ");
                 Scanner sc = new Scanner(System.in);
                 port = sc.nextInt();
-                if(port > 65535 || port < 0) {
+                if (port > 65535 || port < 0) {
                     throw new InputMismatchException();
                 }
             } catch (NumberFormatException | InputMismatchException ignore) {
