@@ -39,13 +39,14 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
     private final PrintStream out;
     private final TUIType tuiType;
     private final String description;
-    private Client client;
+
     private UIState callbackState;
     private UIState state;
     private final Deque<UIState> upcomingStates;
 
-    InetAddress host = null;
-    int port = -1;
+    private Client client;
+    private InetAddress host = null;
+    private int port = -1;
 
     /*@ private invariant nonBlockingScanner != null;
         private invariant out != null;
@@ -510,7 +511,7 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
         } else if (input.toUpperCase().startsWith(SMART.substring(0, 1).toUpperCase())) {
             strategy = new SmartStrategy();
         } else {
-            out.println("Invalid player type.");
+            out.println("Invalid AI level.");
             addState(UIState.ASK_FOR_AI_LEVEL);
             return;
         }
