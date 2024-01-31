@@ -11,6 +11,11 @@ public class ServerGameManager {
     private final ServerClientHandler player2;
     private final Game game;
 
+    /**
+     * instantiate a serverGameManager.
+     * @param player1 serverClientHandler that handles the connection with player1
+     * @param player2 serverClientHandler that handles the connection with player2
+     */
     public ServerGameManager(ServerClientHandler player1, ServerClientHandler player2) {
         this.player1 = player1;
         this.player2 = player2;
@@ -57,6 +62,8 @@ public class ServerGameManager {
 
     /**
      * handles a disconnection of one of the clients.
+     *
+     * @param serverClientHandler that handles the messages of the client that is disconnected
      */
     public synchronized void handleDisconnect(ServerClientHandler serverClientHandler) {
         if (game.gameOver()) {

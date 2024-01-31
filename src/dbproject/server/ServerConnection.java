@@ -16,6 +16,7 @@ public class ServerConnection extends SocketConnection {
      * Instead, the SocketServer and SocketClient classes should be used.
      *
      * @param socket the socket for this connection
+     * @param serverClientHandler that handles this serverConnection
      * @throws IOException if there is an I/O exception while initializing the Reader/Writer objects
      */
     public ServerConnection(Socket socket, ServerClientHandler serverClientHandler)

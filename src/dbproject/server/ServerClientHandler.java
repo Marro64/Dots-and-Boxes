@@ -13,6 +13,12 @@ public class ServerClientHandler {
     private final ServerConnection serverConnection;
     private String username;
 
+    /**
+     * instantiate a serverClientHandler with a socket and a server.
+     * @param socket to create a serverConnection with
+     * @param server that handles certain messages
+     * @throws IOException if an I/O error occurs when opening the socket
+     */
     public ServerClientHandler(Socket socket, Server server) throws IOException {
         this.server = server;
         serverConnection = new ServerConnection(socket, this);

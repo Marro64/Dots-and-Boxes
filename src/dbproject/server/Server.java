@@ -13,6 +13,11 @@ public class Server extends SocketServer {
     private final List<ServerClientHandler> queue;
     private static final String DESCRIPTION = "server Ylona";
 
+    /**
+     * instantiate a server with a port number.
+     * @param port number of the server to listen to
+     * @throws IOException if an I/O error occurs when opening the socket
+     */
     public Server(int port) throws IOException {
         super(port);
         serverClientHandlers = new HashSet<>();
@@ -115,6 +120,8 @@ public class Server extends SocketServer {
      * the server with this username.
      *
      * @param username to check
+     * @param serverClientHandler handling the connection with
+     *                            the client that send a request to login
      * @return true if there is not a client connected to the server with username,
      * or false if there already is a client connected to the server with this username
      */
