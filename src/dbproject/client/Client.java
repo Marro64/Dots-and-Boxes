@@ -263,6 +263,11 @@ public class Client {
         return username;
     }
 
+    /**
+     * returns the server description the client is connected to.
+     *
+     * @return the server description
+     */
     public String getServerDescription() {
         return serverDescription;
     }
