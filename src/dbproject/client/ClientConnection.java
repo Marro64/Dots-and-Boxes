@@ -44,7 +44,7 @@ public class ClientConnection extends SocketConnection {
      */
     @Override
     protected void handleMessage(String message) {
-        System.out.println("ClientConnection.handleMessage: " + message);
+        //System.out.println("ClientConnection.handleMessage: " + message); //debug
         String[] messageParts = message.split(Protocol.SEPARATOR);
         try {
             String header = messageParts[0];
