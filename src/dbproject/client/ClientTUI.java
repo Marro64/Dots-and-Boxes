@@ -20,6 +20,9 @@ import java.util.LinkedList;
  * A TUI for the clients of a Dots n Boxes game.
  */
 public class ClientTUI implements ClientListener, ClientMoveInput {
+    /**
+     * Type of players.
+     */
     public enum TUIType {
         HUMAN, AI
     }
