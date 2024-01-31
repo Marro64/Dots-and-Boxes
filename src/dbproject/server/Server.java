@@ -11,7 +11,7 @@ import java.util.*;
 public class Server extends SocketServer {
     private final Set<ServerClientHandler> serverClientHandlers;
     private final List<ServerClientHandler> queue;
-    private final String description = "server Ylona";
+    private static final String DESCRIPTION = "server Ylona";
 
     public Server(int port) throws IOException {
         super(port);
@@ -24,7 +24,9 @@ public class Server extends SocketServer {
      *
      * @return the server description
      */
-    public String getDescription() { return this.description; }
+    public String getDescription() {
+        return DESCRIPTION;
+    }
 
     /**
      * add a ServerClientHandler to the server.
@@ -70,7 +72,7 @@ public class Server extends SocketServer {
     @Override
     protected void handleConnection(Socket socket) {
         try {
-            ServerClientHandler CH = new ServerClientHandler(socket, this);
+            new ServerClientHandler(socket, this);
         } catch (IOException e) {
             System.out.println("not able to connect");
         }
@@ -103,9 +105,8 @@ public class Server extends SocketServer {
             new ServerGameManager(player1, player2);
             queue.remove(player1);
             queue.remove(player2);
-            System.out.println(
-                    "A new game has started between " + player1.getUsername() + " and "
-                            + player2.getUsername());
+            System.out.println("A new game has started between " + player1.getUsername() + " and " +
+                                       player2.getUsername());
         }
     }
 
@@ -118,11 +119,10 @@ public class Server extends SocketServer {
      * or false if there already is a client connected to the server with this username
      */
     public synchronized boolean checkUserName(String username,
-                                              ServerClientHandler serverClientHandler){
+                                              ServerClientHandler serverClientHandler) {
         for (ServerClientHandler handler : serverClientHandlers) {
-            if (!handler.equals(serverClientHandler)
-                    && handler.getUsername() != null
-                    && handler.getUsername().equals(username)){
+            if (!handler.equals(serverClientHandler) && handler.getUsername() != null &&
+                    handler.getUsername().equals(username)) {
                 return false;
             }
         }

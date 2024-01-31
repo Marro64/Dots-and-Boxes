@@ -8,9 +8,9 @@ import java.net.Socket;
  * ServerGameManager if a game is currently running.
  */
 public class ServerClientHandler {
-    private Server server;
+    private final Server server;
     private ServerGameManager serverGameManager;
-    private ServerConnection serverConnection;
+    private final ServerConnection serverConnection;
     private String username;
 
     public ServerClientHandler(Socket socket, Server server) throws IOException {
@@ -22,18 +22,20 @@ public class ServerClientHandler {
 
     /**
      * set serverGameManager of the client.
+     *
      * @param serverGameManager to set the serverGameManager of the client to
      */
-    public synchronized void setServerGameManager(ServerGameManager serverGameManager){
+    public synchronized void setServerGameManager(ServerGameManager serverGameManager) {
         this.serverGameManager = serverGameManager;
     }
 
     /**
      * returns true of this client is already playing a game, false otherwise.
+     *
      * @return true if this client is playing a game, false otherwise
      */
-    public synchronized boolean isInGame(){
-        return serverGameManager!=null;
+    public synchronized boolean isInGame() {
+        return serverGameManager != null;
     }
 
     /**
@@ -41,7 +43,7 @@ public class ServerClientHandler {
      */
     public synchronized void handleDisconnect() {
         server.removeClient(this);
-        if(serverGameManager!=null){
+        if (serverGameManager != null) {
             serverGameManager.handleDisconnect(this);
         }
     }
@@ -58,11 +60,10 @@ public class ServerClientHandler {
     /**
      * send a newGame message to the server connection.
      *
-     * @param serverGameManager that handles the started game
+     * @param gameManager that handles the started game
      */
-    public void newGame(ServerGameManager serverGameManager) {
-        serverConnection.sendNewGame(serverGameManager.getPlayer1Name(),
-                                     serverGameManager.getPlayer2Name());
+    public void newGame(ServerGameManager gameManager) {
+        serverConnection.sendNewGame(gameManager.getPlayer1Name(), gameManager.getPlayer2Name());
     }
 
     /**
@@ -108,17 +109,18 @@ public class ServerClientHandler {
      * @param clientDescription that is included in the hello message
      */
     public void receiveHello(String clientDescription) {
+        System.out.println("Hello from client " + clientDescription);
         serverConnection.sendHello(server.getDescription());
     }
 
     /**
      * handles a login message received from the server connection.
      *
-     * @param username that is included in the login message
+     * @param userName that is included in the login message
      */
-    public void receiveLogin(String username) {
-        if(server.checkUserName(username,this)){
-            this.username = username;
+    public void receiveLogin(String userName) {
+        if (server.checkUserName(userName, this)) {
+            this.username = userName;
             serverConnection.sendLogin();
             return;
         }
@@ -145,8 +147,7 @@ public class ServerClientHandler {
      * @param location that is included in the move message
      */
     public synchronized void receiveMove(int location) {
-        //System.out.println("ch: Move from client " + username + " received for location "+ location); //debug
-        if(serverGameManager == null){
+        if (serverGameManager == null) {
             sendError();
             return;
         }

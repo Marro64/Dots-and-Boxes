@@ -9,12 +9,17 @@ public class Board {
      */
     public static final int DIM = 6;
     private static final String DELIM = "       ";
-    private static final String[] NUMBERING = {" .  0   .  1   .  2   .  3   .  4   . ",
-            " 5      6      7      8      9      10  ", " .  11  .  12  .  13  .  14  .  15  . ",
-            " 16     17     18     19     20     21  ", " .  22  .  23  .  24  .  25  .  26  . ",
-            " 27     28     29     30     31     32  ", " .  33  .  34  .  35  .  36  .  37  . ",
-            " 38     39     40     41     42     43  ", " .  44  .  45  .  46  .  47  .  48  . ",
-            " 49     50     51     52     53     54  ", " .  55  .  56  .  57  .  58  .  59  . "};
+    private static final String[] NUMBERING =
+            {" .  0   .  1   .  2   .  3   .  4   . ", " 5      6      7      8      9      10  ",
+                    " .  11  .  12  .  13  .  14  .  15  . ",
+                    " 16     17     18     19     20     21  ",
+                    " .  22  .  23  .  24  .  25  .  26  . ",
+                    " 27     28     29     30     31     32  ",
+                    " .  33  .  34  .  35  .  36  .  37  . ",
+                    " 38     39     40     41     42     43  ",
+                    " .  44  .  45  .  46  .  47  .  48  . ",
+                    " 49     50     51     52     53     54  ",
+                    " .  55  .  56  .  57  .  58  .  59  . "};
 
     // Declaring ANSI_RESET so that we can reset the color
     public static final String ANSI_RESET = "\u001B[0m";
@@ -71,10 +76,8 @@ public class Board {
      @*/
     public Board deepCopy() {
         Board copiedBoard = new Board();
-        System.arraycopy(this.lines, 0, copiedBoard.lines, 0,
-                         (DIM - 1) * DIM + (DIM - 1) * DIM);
-        System.arraycopy(this.boxes, 0, copiedBoard.boxes, 0,
-                         (DIM - 1) * (DIM - 1));
+        System.arraycopy(this.lines, 0, copiedBoard.lines, 0, (DIM - 1) * DIM + (DIM - 1) * DIM);
+        System.arraycopy(this.boxes, 0, copiedBoard.boxes, 0, (DIM - 1) * (DIM - 1));
         return copiedBoard;
     }
 
@@ -274,7 +277,7 @@ public class Board {
     /**
      * Returns the content of a horizontal line represented by (row, column) pair.
      *
-     * @param row the row of the horizontal line
+     * @param row    the row of the horizontal line
      * @param column the column of the horizontal line
      * @return the content of the horizontal line
      */
@@ -294,7 +297,7 @@ public class Board {
     /**
      * Returns the content of a vertical line represented by (row, column) pair.
      *
-     * @param row the row of the vertical line
+     * @param row    the row of the vertical line
      * @param column the column of the vertical line
      * @return the content of the vertical line
      */
@@ -348,7 +351,7 @@ public class Board {
     /**
      * Returns the content of the box referred to by the (row,col) pair.
      *
-     * @param row the row of the box
+     * @param row    the row of the box
      * @param column the column of the box
      * @return the content of the box
      */
@@ -494,8 +497,8 @@ public class Board {
             throw new IllegalArgumentException(
                     "location is not horizontal line that has a box above it");
         }
-        if (getLine(location + (DIM - 1)) == 0 || getLine(location + DIM) == 0
-                || getLine(location + (DIM + DIM - 1)) == 0) {
+        if (getLine(location + (DIM - 1)) == 0 || getLine(location + DIM) == 0 ||
+                getLine(location + (DIM + DIM - 1)) == 0) {
             //the other lines surrounding the box are not all set
             return -1;
         }
@@ -522,13 +525,13 @@ public class Board {
             throw new IllegalArgumentException(
                     "location is not horizontal line that has a box under it");
         }
-        if (getLine(location - (DIM - 1)) == 0 || getLine(location - DIM) == 0
-                || getLine(location - (DIM + DIM - 1)) == 0) {
+        if (getLine(location - (DIM - 1)) == 0 || getLine(location - DIM) == 0 ||
+                getLine(location - (DIM + DIM - 1)) == 0) {
             //the other lines surrounding the box are not all set
             return -1;
         }
-        return getRowColHorizontal(location)[1] + ((getRowColHorizontal(
-                location)[0] - 1) * (DIM - 1));
+        return getRowColHorizontal(location)[1] +
+                ((getRowColHorizontal(location)[0] - 1) * (DIM - 1));
 
     }
 
@@ -552,8 +555,8 @@ public class Board {
             throw new IllegalArgumentException(
                     "location is not vertical line that has a box right of it");
         }
-        if (getLine(location + 1) == 0 || getLine(location + DIM) == 0 || getLine(
-                location - (DIM - 1)) == 0) {
+        if (getLine(location + 1) == 0 || getLine(location + DIM) == 0 ||
+                getLine(location - (DIM - 1)) == 0) {
             //the other lines surrounding the box are not all set
             return -1;
         }
@@ -580,8 +583,8 @@ public class Board {
             throw new IllegalArgumentException(
                     "location is not vertical line that has a box left of it");
         }
-        if (getLine(location - 1) == 0 || getLine(location - DIM) == 0 || getLine(
-                location + (DIM - 1)) == 0) {
+        if (getLine(location - 1) == 0 || getLine(location - DIM) == 0 ||
+                getLine(location + (DIM - 1)) == 0) {
             //the other lines surrounding the box are not all set
             return -1;
         }

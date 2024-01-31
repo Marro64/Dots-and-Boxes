@@ -12,13 +12,15 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class BoardTest {
     private Board board;
-    private final int DIM = Board.DIM;
+    private static final int DIM = Board.DIM;
 
     /**
      * create a new board before every test.
      */
     @BeforeEach
-    public void setUp() { board = new Board(); }
+    public void setUp() {
+        board = new Board();
+    }
 
     /**
      * test the construction of the board.

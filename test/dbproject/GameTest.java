@@ -15,8 +15,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class GameTest {
     private Game game;
-    private String player1Name = "player1";
-    private String player2Name = "player2";
+    private final String player1Name = "player1";
+    private final String player2Name = "player2";
 
     /**
      * create a new game with player1 and player2 before every test.
@@ -226,8 +226,8 @@ public class GameTest {
             }
             if (game.getBoard().getLine(movesArray[random]) == 0) {
                 game.doMove(movesArray[random]);
-                if (game.getBoard().completeBox(movesArray[random])[0] != -1 && game.getBoard()
-                        .completeBox(movesArray[random])[1] != -1) {
+                if (game.getBoard().completeBox(movesArray[random])[0] != -1 &&
+                        game.getBoard().completeBox(movesArray[random])[1] != -1) {
                     //check if two boxes are earned and player still got the turn
                     assertEquals(score + 2, game.getPlayerScore(player));
                     assertEquals(player, game.getTurn());

@@ -21,6 +21,7 @@ public class Game {
 
     /**
      * instantiate game with two players.
+     *
      * @param player1 name of player1
      * @param player2 name of player2
      */
@@ -35,12 +36,13 @@ public class Game {
 
     /**
      * instantiate game with two players, their scores, current player and the board.
-     * @param player1 name of player1
-     * @param player2 name of player2
-     * @param player1Score score of player1
-     * @param player2Score score of player2
+     *
+     * @param player1       name of player1
+     * @param player2       name of player2
+     * @param player1Score  score of player1
+     * @param player2Score  score of player2
      * @param currentPlayer name of the current player
-     * @param board of the game
+     * @param board         of the game
      */
     public Game(String player1, String player2, int player1Score, int player2Score,
                 String currentPlayer, Board board) {
@@ -71,12 +73,10 @@ public class Game {
     */
     public Game deepCopy() {
         Board copiedBoard = board.deepCopy();
-        String copiedPlayer1 = player1;
-        String copiedPlayer2 = player2;
         String copiedCurrentPlayer = currentPlayer;
         int copiedPlayer1Score = player1Score;
         int copiedPlayer2Score = player2Score;
-        return new Game(copiedPlayer1, copiedPlayer2, copiedPlayer1Score, copiedPlayer2Score,
+        return new Game(player1, player2, copiedPlayer1Score, copiedPlayer2Score,
                         copiedCurrentPlayer, copiedBoard);
     }
 
@@ -89,7 +89,9 @@ public class Game {
         ensures \result == player1;
         pure;
     */
-    public String getPlayer1() { return this.player1; }
+    public String getPlayer1() {
+        return this.player1;
+    }
 
     /**
      * return the name of player2.
@@ -100,7 +102,9 @@ public class Game {
         ensures \result == player2;
         pure;
     */
-    public String getPlayer2() { return this.player2; }
+    public String getPlayer2() {
+        return this.player2;
+    }
 
     /**
      * return the board of the game.
@@ -111,7 +115,9 @@ public class Game {
         ensures \result == board;
         pure
     */
-    public Board getBoard() { return this.board; }
+    public Board getBoard() {
+        return this.board;
+    }
 
     /**
      * return the score of player with playerName, or -1 if playerName is not a player of this game.
@@ -251,7 +257,7 @@ public class Game {
             int second = board.completeBox(location)[1];
             if (currentPlayer.equals(player1)) {
                 board.setLine(location, 1);
-                if(first == -1 && second == -1){
+                if (first == -1 && second == -1) {
                     currentPlayer = player2;
                     return;
                 }
@@ -265,7 +271,7 @@ public class Game {
                 }
             } else {
                 board.setLine(location, 2);
-                if(first == -1 && second == -1){
+                if (first == -1 && second == -1) {
                     currentPlayer = player1;
                     return;
                 }
@@ -292,10 +298,9 @@ public class Game {
         pure;
     */
     public String toString() {
-        return board.toString() + "\n" +
-                "Player, " + Board.ANSI_RED + "playing with number 1, " + Board.ANSI_RESET + player1 + " score = "
-                + player1Score + "\n" +
-                "Player, "+ Board.ANSI_BLUE + "playing with number 2, " + Board.ANSI_RESET + player2 + " score = " +
-                player2Score + "\n" + "Current player is "+ currentPlayer;
+        return board.toString() + "\n" + "Player, " + Board.ANSI_RED + "playing with number 1, " +
+                Board.ANSI_RESET + player1 + " score = " + player1Score + "\n" + "Player, " +
+                Board.ANSI_BLUE + "playing with number 2, " + Board.ANSI_RESET + player2 +
+                " score = " + player2Score + "\n" + "Current player is " + currentPlayer;
     }
 }

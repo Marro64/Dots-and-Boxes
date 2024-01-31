@@ -58,7 +58,9 @@ public class ServerConnection extends SocketConnection {
      * This method may only be called once.
      */
     @Override
-    protected void start() { super.start(); }
+    protected void start() {
+        super.start();
+    }
 
     /**
      * sends hello with a server description to the connection.
