@@ -15,7 +15,6 @@ import java.net.UnknownHostException;
 import java.util.Deque;
 import java.util.InputMismatchException;
 import java.util.LinkedList;
-import java.util.Scanner;
 
 /**
  * A TUI for the clients of a Dots n Boxes game.
@@ -118,7 +117,6 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
      * @param newState The state to insert.
      */
     private synchronized void insertNextState(UIState newState) {
-        //System.out.println("ClientTUI.insertNextState: " + newState); // debug
         upcomingStates.push(newState);
         notify();
     }
@@ -129,7 +127,6 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
      * @param newState The state to add.
      */
     private synchronized void addState(UIState newState) {
-        //System.out.println("ClientTUI.addState: " + newState); // debug
         upcomingStates.add(newState);
         notify();
     }
@@ -139,7 +136,6 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
      * Does not affect the state that is currently being executed.
      */
     private synchronized void clearUpcomingStates() {
-        //System.out.println("ClientTUI.clearUpcomingStates: " + state); // debug
         upcomingStates.clear();
     }
 
@@ -151,7 +147,6 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
      * @param state The state that is currently requesting input.
      */
     private void setCallbackState(UIState state) {
-        //System.out.println("ClientTUI.setCallbackState: " + state); // debug
         callbackState = state;
     }
 
@@ -161,7 +156,6 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
      * @see dbproject.client.ClientTUI#setCallbackState(UIState)
      */
     private void clearCallbackState() {
-        //System.out.println("ClientTUI.clearCallbackState"); // debug
         callbackState = null;
     }
 
@@ -172,7 +166,6 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
      * @see dbproject.client.ClientTUI#insertNextState(UIState)
      */
     private synchronized void returnToCallbackState() {
-        //System.out.println("ClientTUI.returnToCallbackState " + callbackState); // debug
         if (callbackState != null) {
             insertNextState(callbackState);
         }
@@ -191,7 +184,6 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
     private synchronized UIState getNextState() {
         if (upcomingStates.peek() != null) {
             state = upcomingStates.poll();
-            //System.out.println("ClientTUI.getNextState: " + state); // debug
             nonBlockingScanner.clear();
             return state;
         }

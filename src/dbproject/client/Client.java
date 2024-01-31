@@ -187,7 +187,6 @@ public class Client {
      * @param location Location of move.
      */
     public void receiveMove(int location) {
-        //        System.out.println("client.receiveMove: " + location); // debug
         game.doMove(location);
         for (ClientListener clientListener : clientListeners) {
             clientListener.receiveMove(location);
@@ -202,7 +201,6 @@ public class Client {
      * If player returns >= 0, send returned value as move.
      */
     private void askForMove() {
-        //        System.out.println("client.askForMove"); // debug
         int responseMove = player.determineMove(game);
         if (responseMove >= 0) {
             try {

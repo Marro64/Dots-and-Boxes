@@ -44,7 +44,6 @@ public class ClientConnection extends SocketConnection {
      */
     @Override
     protected void handleMessage(String message) {
-        //System.out.println("ClientConnection.handleMessage: " + message); //debug
         String[] messageParts = message.split(Protocol.SEPARATOR);
         try {
             String header = messageParts[0];
@@ -100,8 +99,7 @@ public class ClientConnection extends SocketConnection {
                 default:
                     throw new IllegalArgumentException();
             }
-        } catch (IllegalArgumentException e) {
-            System.out.println("ClientConnection.receiveMessage caught " + e);
+        } catch (IllegalArgumentException ignore) {
         }
     }
 

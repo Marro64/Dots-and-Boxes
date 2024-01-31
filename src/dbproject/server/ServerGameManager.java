@@ -2,8 +2,6 @@ package dbproject.server;
 
 import dbproject.game.Game;
 import dbproject.networking.Protocol;
-import java.util.Scanner;
-
 /**
  * manages a game between two clients.
  */
@@ -11,7 +9,6 @@ public class ServerGameManager {
     private final ServerClientHandler player1;
     private final ServerClientHandler player2;
     private final Game game;
-    Scanner scanner;
 
     /**
      * instantiate a serverGameManager.
