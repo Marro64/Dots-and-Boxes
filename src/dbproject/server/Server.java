@@ -144,16 +144,21 @@ public class Server extends SocketServer {
     }
 
     public static void main(String[] args) throws IOException {
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Input port number");
-        int port = sc.nextInt();
-        while (port > 65536 || port < 0) {
-            System.out.println("incorrect port number");
-            System.out.println("input port number");
-            port = sc.nextInt();
-        }
+        int port = -1;
+        do {
+            try{
+                System.out.print("Input port number: ");
+                Scanner sc = new Scanner(System.in);
+                port = sc.nextInt();
+                if(port > 65535 || port < 0) {
+                    throw new InputMismatchException();
+                }
+            } catch (NumberFormatException | InputMismatchException ignore) {
+                System.out.println("Invalid port.");
+            }
+        } while (port > 65535 || port < 0);
         Server server = new Server(port);
-        System.out.println("waiting for clients to connect");
+        System.out.println("Waiting for clients to connect...");
         server.acceptConnections();
     }
 }
