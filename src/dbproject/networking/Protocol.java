@@ -1,5 +1,8 @@
 package dbproject.networking;
 
+/**
+ * protocol used for the communication.
+ */
 public class Protocol {
     public static final String HELLO = "HELLO";
     public static final String LOGIN = "LOGIN";
