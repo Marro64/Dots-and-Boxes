@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class BoardTest {
     private Board board;
-    private final int DIM = board.DIM;
+    private final int DIM = Board.DIM;
 
     /**
      * create a new board before every test.
@@ -460,7 +460,7 @@ public class BoardTest {
         board.setBox(0, 1);
         assertTrue(board.toString().contains(Board.ANSI_RED + "___" + Board.ANSI_RESET));
         assertTrue(board.toString().contains(Board.ANSI_RED + "1" + Board.ANSI_RESET));
-        assertTrue(board.toString().contains(Board.ANSI_BLUE + "|" + Board.ANSI_RESET+ " "));
+        assertTrue(board.toString().contains(Board.ANSI_BLUE + "|" + Board.ANSI_RESET + " "));
         assertTrue(board.toString().contains(".     ."));
     }
 }
