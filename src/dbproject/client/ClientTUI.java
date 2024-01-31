@@ -15,6 +15,7 @@ import java.net.UnknownHostException;
 import java.util.Deque;
 import java.util.InputMismatchException;
 import java.util.LinkedList;
+import java.util.Scanner;
 
 /**
  * A TUI for the clients of a Dots n Boxes game.
@@ -760,7 +761,7 @@ public class ClientTUI implements ClientListener, ClientMoveInput {
     }
 
     /**
-     * Instantiates a ClientTUI with the TUIType AI.
+     * Instantiates a ClientTUI with the TUIType Human.
      *
      * @param args Unused
      */

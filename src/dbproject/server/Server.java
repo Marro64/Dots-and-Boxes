@@ -11,7 +11,7 @@ import java.util.*;
 public class Server extends SocketServer {
     private final Set<ServerClientHandler> serverClientHandlers;
     private final List<ServerClientHandler> queue;
-    private static final String DESCRIPTION = "server Ylona";
+    private static final String DESCRIPTION = "Server Minor-2";
 
     /**
      * instantiate a server with a port number.
@@ -150,6 +150,12 @@ public class Server extends SocketServer {
         return users;
     }
 
+    /**
+     * Asks for a port and instantiates a server with this port.
+     *
+     * @param args Unused
+     * @throws IOException if an I/O error occurs when opening the socket
+     */
     public static void main(String[] args) throws IOException {
         int port = -1;
         do {
