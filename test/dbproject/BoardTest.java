@@ -455,11 +455,11 @@ public class BoardTest {
     public void testToString() {
         board.setLine(0, 1);
         board.setLine(5, 1);
-        board.setLine(6, 1);
+        board.setLine(6, 2);
         board.setLine(10, 1);
         board.setBox(0, 1);
-        assertTrue(board.toString().contains("___"));
-        //assertTrue(board.toString().contains("|  "+ Board.ANSI_RED + "1" + Board.ANSI_RESET + "  |"));
-        //assertTrue(board.toString().contains("| "));
+        assertTrue(board.toString().contains(Board.ANSI_RED + "___" + Board.ANSI_RESET));
+        assertTrue(board.toString().contains(Board.ANSI_RED + "1" + Board.ANSI_RESET));
+        assertTrue(board.toString().contains(Board.ANSI_BLUE + "|" + Board.ANSI_RESET+ " "));
     }
 }
