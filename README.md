@@ -15,8 +15,10 @@ and run one of the following commands:
 
 `java -jar AIClientTUI/AIClientTUI.jar`
 
-Or open the project in IntelliJ, mark the src folder as the sources folder, 
-set the jdk to temurin-17 and run one of the following:
+***IMPORTANT: There seems to be a bug when running the program this way where you cannot see your input
+until you press enter. Otherwise, the programs work as intended.***
+
+Or open the project in IntelliJ, set the jdk to temurin-17 and run one of the following:
 
 `src/dbproject/server/Server`
 
@@ -24,8 +26,7 @@ set the jdk to temurin-17 and run one of the following:
 
 `src/dbproject/client/AIClientTUI`
 
-To run a test, open the project in IntelliJ, mark the test folder as the test folder,
-set the jdk to temurin-17 and run one of the following:
+To run a test, open the project in IntelliJ, set the jdk to temurin-17 and run one of the following:
 
 `test/dbproject/BoardTest`
 
