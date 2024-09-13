@@ -1,6 +1,7 @@
 # Minor-2 Dots and Boxes Game
 
 A server, client and AI for playing a game of Dots and Boxes.
+Made as an assignment for during my Computer Science Minor, featuring a thurough design and implementation of object-oriented structures. See the [report](Programming%20Project%20Report%20Minor-2.pdf) for details.
 
 ## Getting started
 
